@@ -7,7 +7,7 @@
 ```groovy
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.hjq:gson.adapter:2.2'
+    implementation 'com.hjq.gson:factory:2.2'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.8.0'
 }
