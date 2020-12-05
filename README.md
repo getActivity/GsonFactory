@@ -1,6 +1,6 @@
 # Json 解析容错框架
 
-* 码云地址：[Gitee](https://gitee.com/getActivity/GsonAdapter)
+* 码云地址：[Gitee](https://gitee.com/getActivity/GsonFactory)
 
 #### Gradle 集成
 
