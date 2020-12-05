@@ -17,7 +17,7 @@ import java.io.InputStream;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/GsonAdapter
+ *    github : https://github.com/getActivity/GsonFactory
  *    time   : 2020/11/10
  *    desc   : Gson 解析容错适配器测试用例
  *    doc    : https://developer.android.google.cn/studio/test

@@ -7,8 +7,8 @@ android {
         applicationId "com.hjq.gson.factory.demo"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 20
-        versionName "2.0"
+        versionCode 22
+        versionName "2.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {

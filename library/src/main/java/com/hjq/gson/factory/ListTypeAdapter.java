@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/GsonAdapter
+ *    github : https://github.com/getActivity/GsonFactory
  *    time   : 2020/05/05
  *    desc   : List 类型解析适配器
  */
