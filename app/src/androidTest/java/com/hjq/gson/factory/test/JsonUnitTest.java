@@ -1,4 +1,4 @@
-package com.hjq.http.test;
+package com.hjq.gson.factory.test;
 
 import android.content.Context;
 

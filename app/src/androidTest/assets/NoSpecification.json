@@ -16,12 +16,12 @@
   "stringTest5" : {},
   "intTest1" : 1.1,
   "intTest2" : null,
-  "intTest3" : "",
+  "intTest3" : "1.1",
   "intTest4" : [],
   "intTest5" : {},
   "longTest1" : 1.1,
   "longTest2" : null,
-  "longTest3" : "22",
+  "longTest3" : "2.2",
   "longTest4" : [],
   "longTest5" : {},
   "floatTest1" : 11,
@@ -33,5 +33,6 @@
   "doubleTest2" : null,
   "doubleTest3" : "22",
   "doubleTest4" : [],
-  "doubleTest5" : {}
+  "doubleTest5" : {},
+  "bean" : ""
 }

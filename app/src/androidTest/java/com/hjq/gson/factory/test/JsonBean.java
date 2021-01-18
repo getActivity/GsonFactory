@@ -1,4 +1,4 @@
-package com.hjq.http.test;
+package com.hjq.gson.factory.test;
 
 import java.util.List;
 
@@ -51,4 +51,11 @@ public class JsonBean {
     private double doubleTest3;
     private double doubleTest4;
     private double doubleTest5;
+
+    private TestBean bean;
+
+    private static class TestBean {
+
+        private int number;
+    }
 }

@@ -1,4 +1,4 @@
-package com.hjq.gson.factory;
+package com.hjq.gson.factory.data;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

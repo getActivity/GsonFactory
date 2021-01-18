@@ -1,4 +1,4 @@
-# Json 解析容错框架
+# Gson 解析容错框架
 
 * 码云地址：[Gitee](https://gitee.com/getActivity/GsonFactory)
 
@@ -7,7 +7,7 @@
 ```groovy
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.hjq.gson:factory:2.2'
+    implementation 'com.hjq.gson:factory:3.0'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.8.0'
 }
@@ -23,6 +23,66 @@ Gson gson = GsonFactory.getSingletonGson();
 GsonBuilder gsonBuilder = GsonFactory.createGsonBuilder();
 ```
 
+#### 容错介绍
+
+* 目前支持容错的数据类型有：
+
+	* `JsonObject`（Bean 对象本身）
+
+	* `JsonArray`（数组或集合）
+	
+	* `String`（字符串）
+
+	* `boolean / Boolean`（布尔值）
+
+	* `int / Integer`（整数，属于数值类）
+	
+	* `long /Long`（长整数，属于数值类）
+	
+	* `float / Float`（单精度浮点数，属于数值类）
+	
+	* `double / Double`（双精度浮点数，属于数值类）
+	
+	* `BigDecimal`（精度更高的浮点数，属于数值类）
+	
+* **基本涵盖 99.99% 的开发场景**，可以运行 Demo 中的**单元测试**用例来查看效果：
+
+|  数据类型  | 容错的范围 |  数据示例  |
+| :----: | :------: |  :-----: |
+|  object | array、字符串、布尔值、数值 |  `[]`、`""`、`false`、`0`  |
+|  array | object、字符串、布尔值、数值 |  `{}`、`""`、`false`、`0`  |
+|  字符串 | object、array、布尔值、数值 |  `{}`、`[]`、`false`、`0`  |
+|  布尔值 | object、array、字符串、数值 |  `{}`、`[]`、`""`、`0`  |
+|  数值 |  object、array、字符串、布尔值 |  `{}`、`[]`、`""`、`false`  |
+
+* 大家可能觉得 Gson 解析容错没什么，那是因为我们对 Gson 解析失败的场景没有了解过：
+
+	* 类型不对：后台有数据时返回 `JsonObject`，没数据返回 `[]`，Gson 会直接抛出异常
+
+	* 措手不及：如果客户端定义的是`整数`，但是后台返回`浮点数`，Gson 会直接抛出异常
+	
+	* 意想不到：如果客户端定义的是`布尔值`，但是后台返回的是 `0` 或者 `1`，Gson 会直接抛出异常
+	
+* 以上情况框架已经做了容错处理，具体处理规则如下：
+
+	* 如果后台返回的类型和客户端定义的类型不匹配，框架就`跳过解析`
+
+	* 如果客户端定义的是整数，但后台返回浮点数，框架就对数值进行`取整`
+
+	* 如果客户端定义布尔值，但是后台返回整数，框架则将`非 0 的数值则处理为 true，否则为 false`
+	
+#### 常见疑问解答
+
+* 有没有必要处理 Json 解析容错？
+
+> 我觉得非常有必要，因为后台返回的数据结构是什么样我们把控不了，但是有一点是肯定的，我们都不希望它崩，因为一个接口的失败导致整个 App 崩溃退出实属不值得，但是 Gson 很敏感，动不动就崩。
+
+* 我们后台用的是 Java，有必要处理容错吗？
+
+> 如果你们的后台用的是 PHP，那我十分推荐你使用这个框架，因为 PHP 返回的数据结构真的很乱，经历过的人都懂，说多了都是泪。
+
+> 如果你们的后台用的是 Java，那么可以根据实际情况而定，例如我现在的公司用的就是 Java 后台，但是 Bugly 有上报一个关于 Gson 解析的 Crash，所以说后台的嘴骗人的鬼，宁可相信鬼也不要相信后台那张嘴。
+
 #### 作者的其他开源项目
 
 * 安卓技术中台：[AndroidProject](https://github.com/getActivity/AndroidProject)
@@ -35,13 +95,17 @@ GsonBuilder gsonBuilder = GsonFactory.createGsonBuilder();
 
 * 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar)
 
-* 国际化框架：[MultiLanguages](https://github.com/getActivity/MultiLanguages)
-
 * 悬浮窗框架：[XToast](https://github.com/getActivity/XToast)
+
+* 国际化框架：[MultiLanguages](https://github.com/getActivity/MultiLanguages)
 
 * 日志框架：[Logcat](https://github.com/getActivity/Logcat)
 
 #### Android技术讨论Q群：78797078
+
+#### 微信公众号：Android轮子哥
+
+![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/official_ccount.png)
 
 #### 如果您觉得我的开源库帮你节省了大量的开发时间，请扫描下方的二维码随意打赏，要是能打赏个 10.24 :monkey_face:就太:thumbsup:了。您的支持将鼓励我继续创作:octocat:
 
