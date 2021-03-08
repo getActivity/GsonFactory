@@ -34,5 +34,8 @@
   "doubleTest3" : "22",
   "doubleTest4" : [],
   "doubleTest5" : {},
+  "bigDecimal1" : "22",
+  "bigDecimal2" : [],
+  "bigDecimal3" : {},
   "bean" : ""
 }

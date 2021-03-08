@@ -30,7 +30,7 @@ public class DoubleTypeAdapter extends TypeAdapter<Double> {
                 return null;
             default:
                 in.skipValue();
-                return null;
+                throw new IllegalArgumentException();
         }
     }
 

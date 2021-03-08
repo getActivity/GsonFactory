@@ -3,9 +3,12 @@ package com.hjq.gson.factory.element;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.ObjectConstructor;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import com.hjq.gson.factory.GsonFactory;
+import com.hjq.gson.factory.JsonCallback;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -15,36 +18,48 @@ import java.util.Collection;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/GsonFactory
  *    time   : 2020/12/08
- *    desc   : JsonArray 解析适配器，参考：{@link com.google.gson.internal.bind.CollectionTypeAdapterFactory}
+ *    desc   : Array 解析适配器，参考：{@link com.google.gson.internal.bind.CollectionTypeAdapterFactory}
  */
 public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
 
-    private final TypeAdapter<E> elementTypeAdapter;
-    private final ObjectConstructor<? extends Collection<E>> constructor;
+    private final TypeAdapter<E> mElementTypeAdapter;
+    private final ObjectConstructor<? extends Collection<E>> mObjectConstructor;
 
-    public CollectionTypeAdapter(Gson context, Type elementType,
-                                 TypeAdapter<E> elementTypeAdapter,
-                                 ObjectConstructor<? extends Collection<E>> constructor) {
-        this.elementTypeAdapter = new TypeAdapterRuntimeTypeWrapper<E>(context, elementTypeAdapter, elementType);
-        this.constructor = constructor;
+    private TypeToken<?> mTypeToken;
+    private String mFieldName;
+
+    public CollectionTypeAdapter(Gson gson, Type elementType, TypeAdapter<E> elementTypeAdapter, ObjectConstructor<? extends Collection<E>> constructor) {
+        mElementTypeAdapter = new TypeAdapterRuntimeTypeWrapper<>(gson, elementTypeAdapter, elementType);
+        mObjectConstructor = constructor;
+    }
+
+    public void setReflectiveType(TypeToken<?> typeToken, String fieldName) {
+        mTypeToken = typeToken;
+        mFieldName = fieldName;
     }
 
     @Override
     public Collection<E> read(JsonReader in) throws IOException {
-        if (in.peek() == JsonToken.NULL) {
+        JsonToken jsonToken = in.peek();
+
+        if (jsonToken == JsonToken.NULL) {
             in.nextNull();
             return null;
         }
 
-        if (in.peek() != JsonToken.BEGIN_ARRAY) {
+        if (jsonToken != JsonToken.BEGIN_ARRAY) {
             in.skipValue();
+            JsonCallback callback = GsonFactory.getCallback();
+            if (callback != null) {
+                callback.onTypeException(mTypeToken, mFieldName, jsonToken);
+            }
             return null;
         }
 
-        Collection<E> collection = constructor.construct();
+        Collection<E> collection = mObjectConstructor.construct();
         in.beginArray();
         while (in.hasNext()) {
-            E instance = elementTypeAdapter.read(in);
+            E instance = mElementTypeAdapter.read(in);
             collection.add(instance);
         }
         in.endArray();
@@ -60,7 +75,7 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
 
         out.beginArray();
         for (E element : collection) {
-            elementTypeAdapter.write(out, element);
+            mElementTypeAdapter.write(out, element);
         }
         out.endArray();
     }

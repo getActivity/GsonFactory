@@ -28,7 +28,7 @@ public class StringTypeAdapter extends TypeAdapter<String> {
                 return null;
             default:
                 in.skipValue();
-                return null;
+                throw new IllegalArgumentException();
         }
     }
 

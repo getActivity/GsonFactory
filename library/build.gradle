@@ -7,23 +7,22 @@ android {
 
     defaultConfig {
         minSdkVersion 11
-        targetSdkVersion 26
-        versionCode 30
-        versionName "3.0"
+        versionCode 50
+        versionName "5.0"
     }
 }
 
 dependencies {
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
-    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 
 publish {
     userOrg = 'getactivity'
     groupId = 'com.hjq.gson'
     artifactId = 'factory'
-    publishVersion = '3.0'
+    publishVersion = '5.0'
     desc = 'Gson parsing fault-tolerant framework'
     website = "https://github.com/getActivity/GsonFactory"
 }

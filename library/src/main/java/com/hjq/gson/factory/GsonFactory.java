@@ -36,6 +36,8 @@ public final class GsonFactory {
 
     private static final List<TypeAdapterFactory> TYPE_ADAPTER_FACTORIES = new ArrayList<TypeAdapterFactory>();
 
+    private static JsonCallback sJsonCallback;
+
     private static volatile Gson sGson;
 
     private GsonFactory() {}
@@ -69,6 +71,14 @@ public final class GsonFactory {
         TYPE_ADAPTER_FACTORIES.add(factory);
     }
 
+    public static void setExceptionListener(JsonCallback callback) {
+        GsonFactory.sJsonCallback = callback;
+    }
+
+    public static JsonCallback getCallback() {
+        return sJsonCallback;
+    }
+
     /**
      * 注册构造函数创建器
      *
@@ -87,16 +97,15 @@ public final class GsonFactory {
         for (TypeAdapterFactory typeAdapterFactory : TYPE_ADAPTER_FACTORIES) {
             gsonBuilder.registerTypeAdapterFactory(typeAdapterFactory);
         }
-        ConstructorConstructor constructorConstructor = new ConstructorConstructor(INSTANCE_CREATORS);
-        return gsonBuilder
-                .registerTypeAdapterFactory(TypeAdapters.newFactory(String.class, new StringTypeAdapter()))
+        ConstructorConstructor constructor = new ConstructorConstructor(INSTANCE_CREATORS);
+        return gsonBuilder.registerTypeAdapterFactory(TypeAdapters.newFactory(String.class, new StringTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(boolean.class, Boolean.class, new BooleanTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(int.class, Integer.class, new IntegerTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(long.class, Long.class, new LongTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(float.class, Float.class, new FloatTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(double.class, Double.class, new DoubleTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(BigDecimal.class, new BigDecimalTypeAdapter()))
-                .registerTypeAdapterFactory(new CollectionTypeAdapterFactory(constructorConstructor))
-                .registerTypeAdapterFactory(new ReflectiveTypeAdapterFactory(constructorConstructor, FieldNamingPolicy.IDENTITY, Excluder.DEFAULT));
+                .registerTypeAdapterFactory(new CollectionTypeAdapterFactory(constructor))
+                .registerTypeAdapterFactory(new ReflectiveTypeAdapterFactory(constructor, FieldNamingPolicy.IDENTITY, Excluder.DEFAULT));
     }
 }

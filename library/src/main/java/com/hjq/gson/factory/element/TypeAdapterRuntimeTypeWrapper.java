@@ -15,23 +15,23 @@ import java.lang.reflect.TypeVariable;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/GsonFactory
  *    time   : 2020/12/08
- *    desc   : JsonObject 解析适配器，参考：{@link com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper}
+ *    desc   : Object 解析适配器，参考：{@link com.google.gson.internal.bind.TypeAdapterRuntimeTypeWrapper}
  */
 public class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
 
-    private final Gson context;
-    private final TypeAdapter<T> delegate;
-    private final Type type;
+    private final Gson mGson;
+    private final TypeAdapter<T> mDelegate;
+    private final Type mType;
 
-    public TypeAdapterRuntimeTypeWrapper(Gson context, TypeAdapter<T> delegate, Type type) {
-        this.context = context;
-        this.delegate = delegate;
-        this.type = type;
+    public TypeAdapterRuntimeTypeWrapper(Gson gson, TypeAdapter<T> delegate, Type type) {
+        mGson = gson;
+        mDelegate = delegate;
+        mType = type;
     }
 
     @Override
     public T read(JsonReader in) throws IOException {
-        return delegate.read(in);
+        return mDelegate.read(in);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -43,17 +43,17 @@ public class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
         // Third preference: reflective type adapter for the runtime type (if it is a sub class of the declared type)
         // Fourth preference: reflective type adapter for the declared type
 
-        TypeAdapter chosen = delegate;
-        Type runtimeType = getRuntimeTypeIfMoreSpecific(type, value);
-        if (runtimeType != type) {
-            TypeAdapter runtimeTypeAdapter = context.getAdapter(TypeToken.get(runtimeType));
+        TypeAdapter chosen = mDelegate;
+        Type runtimeType = getRuntimeTypeIfMoreSpecific(mType, value);
+        if (runtimeType != mType) {
+            TypeAdapter runtimeTypeAdapter = mGson.getAdapter(TypeToken.get(runtimeType));
             if (!(runtimeTypeAdapter instanceof ReflectiveTypeAdapterFactory.Adapter)) {
                 // The user registered a type adapter for the runtime type, so we will use that
                 chosen = runtimeTypeAdapter;
-            } else if (!(delegate instanceof ReflectiveTypeAdapterFactory.Adapter)) {
+            } else if (!(mDelegate instanceof ReflectiveTypeAdapterFactory.Adapter)) {
                 // The user registered a type adapter for Base class, so we prefer it over the
                 // reflective type adapter for the runtime type
-                chosen = delegate;
+                chosen = mDelegate;
             } else {
                 // Use the type adapter for runtime type
                 chosen = runtimeTypeAdapter;

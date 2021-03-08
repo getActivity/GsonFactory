@@ -24,7 +24,7 @@ public class BigDecimalTypeAdapter extends TypeAdapter<BigDecimal> {
                 if (result == null || "".equals(result)) {
                     return new BigDecimal(0);
                 }
-                return new BigDecimal(in.nextString());
+                return new BigDecimal(result);
             case NULL:
                 in.nextNull();
                 return null;

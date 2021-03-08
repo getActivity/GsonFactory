@@ -41,7 +41,7 @@ public class LongTypeAdapter extends TypeAdapter<Long> {
                 return null;
             default:
                 in.skipValue();
-                return null;
+                throw new IllegalArgumentException();
         }
     }
 

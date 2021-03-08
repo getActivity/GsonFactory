@@ -41,7 +41,7 @@ public class IntegerTypeAdapter extends TypeAdapter<Integer> {
                 return null;
             default:
                 in.skipValue();
-                return null;
+                throw new IllegalArgumentException();
         }
     }
 

@@ -3,9 +3,12 @@ package com.hjq.gson.factory.element;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.ObjectConstructor;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import com.hjq.gson.factory.GsonFactory;
+import com.hjq.gson.factory.JsonCallback;
 
 import java.io.IOException;
 import java.util.Map;
@@ -14,46 +17,68 @@ import java.util.Map;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/GsonFactory
  *    time   : 2020/12/08
- *    desc   : JsonObject 解析适配器，参考：{@link com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.Adapter}
+ *    desc   : Object 解析适配器，参考：{@link com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.Adapter}
  */
 public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
 
-    private final ObjectConstructor<T> constructor;
-    private final Map<String, BoundField> boundFields;
+    private final ObjectConstructor<T> mConstructor;
+    private final Map<String, ReflectiveFieldBound> mBoundFields;
 
-    public ReflectiveTypeAdapter(ObjectConstructor<T> constructor, Map<String, BoundField> boundFields) {
-        this.constructor = constructor;
-        this.boundFields = boundFields;
+    private TypeToken<?> mTypeToken;
+    private String mFieldName;
+
+    public ReflectiveTypeAdapter(ObjectConstructor<T> constructor, Map<String, ReflectiveFieldBound> fields) {
+        mConstructor = constructor;
+        mBoundFields = fields;
+    }
+
+    public void setReflectiveType(TypeToken<?> typeToken, String fieldName) {
+        mTypeToken = typeToken;
+        mFieldName = fieldName;
     }
 
     @Override
     public T read(JsonReader in) throws IOException {
-        if (in.peek() == JsonToken.NULL) {
+        JsonToken jsonToken = in.peek();
+
+        if (jsonToken == JsonToken.NULL) {
             in.nextNull();
             return null;
         }
 
-        if (in.peek() != JsonToken.BEGIN_OBJECT) {
+        if (jsonToken != JsonToken.BEGIN_OBJECT) {
             in.skipValue();
+            JsonCallback callback = GsonFactory.getCallback();
+            if (callback != null) {
+                callback.onTypeException(mTypeToken, mFieldName, jsonToken);
+            }
             return null;
         }
 
-        T instance = constructor.construct();
-        try {
-            in.beginObject();
-            while (in.hasNext()) {
-                String name = in.nextName();
-                BoundField field = boundFields.get(name);
-                if (field == null || !field.isDeserialized()) {
-                    in.skipValue();
-                } else {
-                    field.read(in, instance);
+        T instance = mConstructor.construct();
+        in.beginObject();
+        while (in.hasNext()) {
+            String name = in.nextName();
+            ReflectiveFieldBound field = mBoundFields.get(name);
+            if (field == null || !field.isDeserialized()) {
+                in.skipValue();
+                continue;
+            }
+
+            JsonToken peek = in.peek();
+
+            try {
+                field.read(in, instance);
+            } catch (IllegalStateException e) {
+                throw new JsonSyntaxException(e);
+            } catch (IllegalAccessException e) {
+                throw new AssertionError(e);
+            } catch (IllegalArgumentException e) {
+                JsonCallback callback = GsonFactory.getCallback();
+                if (callback != null) {
+                    callback.onTypeException(TypeToken.get(instance.getClass()), field.getFieldName(), peek);
                 }
             }
-        } catch (IllegalStateException e) {
-            throw new JsonSyntaxException(e);
-        } catch (IllegalAccessException e) {
-            throw new AssertionError(e);
         }
         in.endObject();
         return instance;
@@ -67,15 +92,15 @@ public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
         }
 
         out.beginObject();
-        try {
-            for (BoundField boundField : boundFields.values()) {
-                if (boundField.writeField(value)) {
-                    out.name(boundField.getName());
-                    boundField.write(out, value);
+        for (ReflectiveFieldBound fieldBound : mBoundFields.values()) {
+            try {
+                if (fieldBound.writeField(value)) {
+                    out.name(fieldBound.getFieldName());
+                    fieldBound.write(out, value);
                 }
+            } catch (IllegalAccessException e) {
+                throw new AssertionError(e);
             }
-        } catch (IllegalAccessException e) {
-            throw new AssertionError(e);
         }
         out.endObject();
     }

@@ -30,7 +30,7 @@ public class FloatTypeAdapter extends TypeAdapter<Float> {
                 return null;
             default:
                 in.skipValue();
-                return null;
+                throw new IllegalArgumentException();
         }
     }
 

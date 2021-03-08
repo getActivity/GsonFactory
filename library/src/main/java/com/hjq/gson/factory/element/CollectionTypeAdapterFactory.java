@@ -16,14 +16,14 @@ import java.util.Collection;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/GsonFactory
  *    time   : 2020/12/08
- *    desc   : JsonArray 解析适配器，参考：{@link com.google.gson.internal.bind.CollectionTypeAdapterFactory}
+ *    desc   : Array 解析适配器，参考：{@link com.google.gson.internal.bind.CollectionTypeAdapterFactory}
  */
 public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
-    private final ConstructorConstructor constructorConstructor;
+    private final ConstructorConstructor mConstructorConstructor;
 
-    public CollectionTypeAdapterFactory(ConstructorConstructor constructorConstructor) {
-        this.constructorConstructor = constructorConstructor;
+    public CollectionTypeAdapterFactory(ConstructorConstructor constructor) {
+        mConstructorConstructor = constructor;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         Type type = typeToken.getType();
         Class<? super T> rawType = typeToken.getRawType();
         // 判断是否包含这种类型
-        if (ReflectiveTypeTools.containsClass(rawType)) {
+        if (ReflectiveTypeUtils.containsClass(rawType)) {
             return null;
         }
         if (typeToken.getType() instanceof GenericArrayType ||
@@ -46,7 +46,7 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
         Type elementType = $Gson$Types.getCollectionElementType(type, rawType);
         TypeAdapter<?> elementTypeAdapter = gson.getAdapter(TypeToken.get(elementType));
-        ObjectConstructor<T> constructor = constructorConstructor.get(typeToken);
+        ObjectConstructor<T> constructor = mConstructorConstructor.get(typeToken);
 
         // create() doesn't define a type parameter
         @SuppressWarnings({"unchecked", "rawtypes"})

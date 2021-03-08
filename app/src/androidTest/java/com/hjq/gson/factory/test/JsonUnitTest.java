@@ -1,11 +1,15 @@
 package com.hjq.gson.factory.test;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonToken;
 import com.hjq.gson.factory.GsonFactory;
+import com.hjq.gson.factory.JsonCallback;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,7 +26,7 @@ import java.io.InputStream;
  *    desc   : Gson 解析容错适配器测试用例
  *    doc    : https://developer.android.google.cn/studio/test
  */
-public class JsonUnitTest {
+public final class JsonUnitTest {
 
     private Gson mGson;
 
@@ -32,6 +36,14 @@ public class JsonUnitTest {
     @Before
     public void onTestBefore() {
         mGson = GsonFactory.getSingletonGson();
+        // 设置 Json 解析容错监听
+        GsonFactory.setExceptionListener(new JsonCallback() {
+
+            @Override
+            public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
+                Log.e("GsonFactory", "类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
+            }
+        });
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.test;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  *    time   : 2020/11/10
  *    desc   : Gson 解析容错模拟数据
  */
-public class JsonBean {
+public final class JsonBean {
 
     private List<String> listTest1;
     private List<String> listTest2;
@@ -51,6 +52,10 @@ public class JsonBean {
     private double doubleTest3;
     private double doubleTest4;
     private double doubleTest5;
+
+    private BigDecimal bigDecimal1;
+    private BigDecimal bigDecimal2;
+    private BigDecimal bigDecimal3;
 
     private TestBean bean;
 

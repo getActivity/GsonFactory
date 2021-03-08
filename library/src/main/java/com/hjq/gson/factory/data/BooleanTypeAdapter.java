@@ -30,7 +30,7 @@ public class BooleanTypeAdapter extends TypeAdapter<Boolean> {
                 return null;
             default:
                 in.skipValue();
-                return null;
+                throw new IllegalArgumentException();
         }
     }
 

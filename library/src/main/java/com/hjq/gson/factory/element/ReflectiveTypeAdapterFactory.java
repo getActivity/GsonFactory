@@ -22,19 +22,19 @@ import java.util.Map;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/GsonFactory
  *    time   : 2020/12/08
- *    desc   : JsonObject 解析适配器，参考：{@link com.google.gson.internal.bind.ReflectiveTypeAdapterFactory}
+ *    desc   : Object 解析适配器，参考：{@link com.google.gson.internal.bind.ReflectiveTypeAdapterFactory}
  */
 public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
 
-    private final ConstructorConstructor constructorConstructor;
-    private final FieldNamingStrategy fieldNamingPolicy;
-    private final Excluder excluder;
+    private final ConstructorConstructor mConstructorConstructor;
+    private final FieldNamingStrategy mFieldNamingPolicy;
+    private final Excluder mExcluder;
 
-    public ReflectiveTypeAdapterFactory(ConstructorConstructor constructorConstructor,
-                                        FieldNamingStrategy fieldNamingPolicy, Excluder excluder) {
-        this.constructorConstructor = constructorConstructor;
-        this.fieldNamingPolicy = fieldNamingPolicy;
-        this.excluder = excluder;
+    public ReflectiveTypeAdapterFactory(ConstructorConstructor constructor,
+                                        FieldNamingStrategy strategy, Excluder excluder) {
+        mConstructorConstructor = constructor;
+        mFieldNamingPolicy = strategy;
+        mExcluder = excluder;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
         Class<? super T> raw = type.getRawType();
 
         // 判断是否包含这种类型
-        if (ReflectiveTypeTools.containsClass(raw)) {
+        if (ReflectiveTypeUtils.containsClass(raw)) {
             return null;
         }
         // 判断是否是数组
@@ -72,11 +72,11 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
         if (Enum.class.isAssignableFrom(raw) && raw != Enum.class) {
             return null;
         }
-        return new ReflectiveTypeAdapter<>(constructorConstructor.get(type), getBoundFields(gson, type, raw));
+        return new ReflectiveTypeAdapter<>(mConstructorConstructor.get(type), getBoundFields(gson, type, raw));
     }
 
-    private Map<String, BoundField> getBoundFields(Gson context, TypeToken<?> type, Class<?> raw) {
-        Map<String, BoundField> result = new LinkedHashMap<>();
+    private Map<String, ReflectiveFieldBound> getBoundFields(Gson gson, TypeToken<?> type, Class<?> raw) {
+        Map<String, ReflectiveFieldBound> result = new LinkedHashMap<>();
         if (raw.isInterface()) {
             return result;
         }
@@ -93,23 +93,23 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
                 field.setAccessible(true);
                 Type fieldType = $Gson$Types.resolve(type.getType(), raw, field.getGenericType());
                 List<String> fieldNames = getFieldNames(field);
-                BoundField previous = null;
+                ReflectiveFieldBound previous = null;
                 for (int i = 0; i < fieldNames.size(); ++i) {
                     String name = fieldNames.get(i);
                     if (i != 0) {
                         // only serialize the default name
                         serialize = false;
                     }
-                    BoundField boundField = ReflectiveTypeTools.createBoundField(context, constructorConstructor, field, name,
+                    ReflectiveFieldBound fieldBound = ReflectiveTypeUtils.createBoundField(gson, mConstructorConstructor, field, name,
                             TypeToken.get(fieldType), serialize, deserialize);
-                    BoundField replaced = result.put(name, boundField);
+                    ReflectiveFieldBound replaced = result.put(name, fieldBound);
                     if (previous == null) {
                         previous = replaced;
                     }
                 }
                 if (previous != null) {
                     throw new IllegalArgumentException(declaredType
-                            + " declares multiple JSON fields named " + previous.getName());
+                            + " declares multiple JSON fields named " + previous.getFieldName());
                 }
             }
             type = TypeToken.get($Gson$Types.resolve(type.getType(), raw, raw.getGenericSuperclass()));
@@ -118,15 +118,15 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
         return result;
     }
 
-    private boolean excludeField(Field f, boolean serialize) {
-        return excludeField(f, serialize, excluder);
+    private boolean excludeField(Field field, boolean serialize) {
+        return excludeField(field, serialize, mExcluder);
     }
 
-    private static boolean excludeField(Field f, boolean serialize, Excluder excluder) {
-        return !excluder.excludeClass(f.getType(), serialize) && !excluder.excludeField(f, serialize);
+    private static boolean excludeField(Field field, boolean serialize, Excluder excluder) {
+        return !excluder.excludeClass(field.getType(), serialize) && !excluder.excludeField(field, serialize);
     }
 
-    private List<String> getFieldNames(Field f) {
-        return ReflectiveTypeTools.getFieldName(fieldNamingPolicy, f);
+    private List<String> getFieldNames(Field field) {
+        return ReflectiveTypeUtils.getFieldName(mFieldNamingPolicy, field);
     }
 }
