@@ -48,7 +48,7 @@ public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
 
         if (jsonToken != JsonToken.BEGIN_OBJECT) {
             in.skipValue();
-            JsonCallback callback = GsonFactory.getCallback();
+            JsonCallback callback = GsonFactory.getJsonCallback();
             if (callback != null) {
                 callback.onTypeException(mTypeToken, mFieldName, jsonToken);
             }
@@ -74,7 +74,7 @@ public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
             } catch (IllegalAccessException e) {
                 throw new AssertionError(e);
             } catch (IllegalArgumentException e) {
-                JsonCallback callback = GsonFactory.getCallback();
+                JsonCallback callback = GsonFactory.getJsonCallback();
                 if (callback != null) {
                     callback.onTypeException(TypeToken.get(instance.getClass()), field.getFieldName(), peek);
                 }

@@ -7,7 +7,7 @@
 ```groovy
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.hjq.gson:factory:5.0'
+    implementation 'com.hjq.gson:factory:5.2'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.8.5'
 }
@@ -28,17 +28,25 @@ Gson gson = GsonFactory.getSingletonGson();
 
 ```java
 // 设置自定义的 Gson 对象
-GsonFactory.setSingletonGson(gson);
+GsonFactory.setSingletonGson(Gson gson);
 
 // 创建一个 Gson 构建器（已处理容错）
-GsonBuilder gsonBuilder = GsonFactory.createGsonBuilder();
+GsonBuilder gsonBuilder = GsonFactory.newGsonBuilder();
+
+// 注册类型适配器
+GsonFactory.registerTypeAdapterFactory(TypeAdapterFactory factory);
+
+// 注册构造函数创建器
+GsonFactory.registerInstanceCreator(Type type, InstanceCreator<?> creator);
 
 // 设置 Json 解析容错监听
-GsonFactory.setExceptionListener(new JsonCallback() {
+GsonFactory.setJsonCallback(new JsonCallback() {
 
     @Override
     public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
-        Log.e("GsonFactory", "类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
+        // Log.e("GsonFactory", "类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
+        // 上报到 Bugly 错误列表
+        CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
     }
 });
 ```

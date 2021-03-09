@@ -7,8 +7,8 @@ android {
         applicationId "com.hjq.gson.factory.demo"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 50
-        versionName "5.0"
+        versionCode 52
+        versionName "5.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
@@ -36,4 +36,8 @@ dependencies {
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
     implementation 'com.google.code.gson:gson:2.8.5'
+
+    // Bugly 异常捕捉：https://bugly.qq.com/docs/user-guide/instruction-manual-android/?v=20190418140644
+    implementation 'com.tencent.bugly:crashreport:3.3.3'
+    implementation 'com.tencent.bugly:nativecrashreport:3.7.700'
 }

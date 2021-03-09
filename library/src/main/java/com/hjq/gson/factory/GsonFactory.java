@@ -50,7 +50,7 @@ public final class GsonFactory {
         if(sGson == null) {
             synchronized (GsonFactory.class) {
                 if(sGson == null){
-                    sGson = createGsonBuilder().create();
+                    sGson = newGsonBuilder().create();
                 }
             }
         }
@@ -71,11 +71,11 @@ public final class GsonFactory {
         TYPE_ADAPTER_FACTORIES.add(factory);
     }
 
-    public static void setExceptionListener(JsonCallback callback) {
+    public static void setJsonCallback(JsonCallback callback) {
         GsonFactory.sJsonCallback = callback;
     }
 
-    public static JsonCallback getCallback() {
+    public static JsonCallback getJsonCallback() {
         return sJsonCallback;
     }
 
@@ -92,7 +92,7 @@ public final class GsonFactory {
     /**
      * 创建 Gson 构建对象
      */
-    public static GsonBuilder createGsonBuilder() {
+    public static GsonBuilder newGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         for (TypeAdapterFactory typeAdapterFactory : TYPE_ADAPTER_FACTORIES) {
             gsonBuilder.registerTypeAdapterFactory(typeAdapterFactory);

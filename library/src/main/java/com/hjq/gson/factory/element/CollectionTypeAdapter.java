@@ -49,7 +49,7 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
 
         if (jsonToken != JsonToken.BEGIN_ARRAY) {
             in.skipValue();
-            JsonCallback callback = GsonFactory.getCallback();
+            JsonCallback callback = GsonFactory.getJsonCallback();
             if (callback != null) {
                 callback.onTypeException(mTypeToken, mFieldName, jsonToken);
             }
