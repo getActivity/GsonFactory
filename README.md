@@ -2,12 +2,36 @@
 
 * 码云地址：[Gitee](https://gitee.com/getActivity/GsonFactory)
 
-#### Gradle 集成
+#### 集成步骤
+
+* 在项目根目录下的 `build.gradle` 文件中加入
 
 ```groovy
+buildscript {
+    ......
+}
+allprojects {
+    repositories {
+        // JitPack 远程仓库：https://jitpack.io
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+* 在项目 app 模块下的 `build.gradle` 文件中加入
+
+```groovy
+android {
+    // 支持 JDK 1.8
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.hjq.gson:factory:5.2'
+    implementation 'com.github.getActivity:GsonFactory:5.2'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.8.5'
 }

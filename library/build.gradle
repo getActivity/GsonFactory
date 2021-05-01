@@ -1,6 +1,4 @@
-//文件开头配置
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 26
@@ -16,15 +14,6 @@ dependencies {
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
     implementation 'com.google.code.gson:gson:2.8.5'
-}
-
-publish {
-    userOrg = 'getactivity'
-    groupId = 'com.hjq.gson'
-    artifactId = 'factory'
-    publishVersion = '5.2'
-    desc = 'Gson parsing fault-tolerant framework'
-    website = "https://github.com/getActivity/GsonFactory"
 }
 
 // 防止编码问题
