@@ -1,5 +1,8 @@
 package com.hjq.gson.factory.test;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -57,7 +60,11 @@ public final class JsonBean {
     private BigDecimal bigDecimal2;
     private BigDecimal bigDecimal3;
 
-    private TestBean bean;
+    private TestBean bean1;
+    private TestBean bean2;
+
+    private JSONObject jsonObject;
+    private JSONArray jsonArray;
 
     private static class TestBean {
 

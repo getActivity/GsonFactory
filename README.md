@@ -1,15 +1,12 @@
 # Gson 解析容错框架
 
-* 码云地址：[Gitee](https://gitee.com/getActivity/GsonFactory)
+* 项目地址：[Github](https://github.com/getActivity/GsonFactory)、[码云](https://gitee.com/getActivity/GsonFactory)
 
 #### 集成步骤
 
-* 在项目根目录下的 `build.gradle` 文件中加入
+* 如果你的项目 Gradle 配置是在 `7.0 以下`，需要在 `build.gradle` 文件中加入
 
 ```groovy
-buildscript {
-    ......
-}
 allprojects {
     repositories {
         // JitPack 远程仓库：https://jitpack.io
@@ -18,24 +15,37 @@ allprojects {
 }
 ```
 
-* 在项目 app 模块下的 `build.gradle` 文件中加入
+* 如果你的 Gradle 配置是 `7.0 及以上`，则需要在 `settings.gradle` 文件中加入
+
+```groovy
+dependencyResolutionManagement {
+    repositories {
+        // JitPack 远程仓库：https://jitpack.io
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+* 配置完远程仓库后，在项目 app 模块下的 `build.gradle` 文件中加入远程依赖
 
 ```groovy
 android {
-    // 支持 JDK 1.8
-    compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
-    }
+	// 支持 JDK 1.8
+	compileOptions {
+		targetCompatibility JavaVersion.VERSION_1_8
+		sourceCompatibility JavaVersion.VERSION_1_8
+	}
 }
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:5.2'
+    implementation 'com.github.getActivity:GsonFactory:6.0'
     // Json 解析框架：https://github.com/google/gson
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.9.0'
 }
 ```
+
+* 需要注意的是：Gson 框架必须使用 **2.9.0** 及以上版本，否则将会出现版本兼容问题
 
 #### 使用文档
 
@@ -69,7 +79,7 @@ GsonFactory.setJsonCallback(new JsonCallback() {
     @Override
     public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
         // Log.e("GsonFactory", "类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
-        // 上报到 Bugly 错误列表
+        // 上报到 Bugly 错误列表中
         CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
     }
 });
@@ -89,7 +99,7 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 
 	* `int / Integer`（整数，属于数值类）
 	
-	* `long /Long`（长整数，属于数值类）
+	* `long / Long`（长整数，属于数值类）
 	
 	* `float / Float`（单精度浮点数，属于数值类）
 	
@@ -139,33 +149,49 @@ Retrofit retrofit = new Retrofit.Builder()
 
 * 我们后台用的是 Java，有必要处理容错吗？
 
-> 如果你们的后台用的是 PHP，那我十分推荐你使用这个框架，因为 PHP 返回的数据结构很乱，这块经历过的人都懂，没经历过的人怎么说都不懂。
+> 如果你们的后台用的是 PHP，那我十分推荐你使用这个框架，因为 PHP 返回的数据结构很乱，这块经历过的人都懂，说多了都是泪，没经历过的人怎么说都不懂。
 
-> 如果你们的后台用的是 Java，那么可以根据实际情况而定，例如我现在的公司用的就是 Java 后台，但是 Bugly 有上报一个关于 Gson 解析的 Crash，所以后台的话只能信一半。
+> 如果你们的后台用的是 Java，那么可以根据实际情况而定，可用可不用，但是最好用，作为一种兜底方案，这样就能防止后台突然某一天不讲码德，例如我现在的公司用的就是 Java 后台，但是 Bugly 还是有上报关于 Gson 解析的异常，所以后台的话不能全信。
 
 #### 作者的其他开源项目
 
-* 安卓技术中台：[AndroidProject](https://github.com/getActivity/AndroidProject)
+* 安卓技术中台：[AndroidProject](https://github.com/getActivity/AndroidProject) ![](https://img.shields.io/github/stars/getActivity/AndroidProject.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidProject.svg)
 
-* 网络框架：[EasyHttp](https://github.com/getActivity/EasyHttp)
+* 安卓技术中台 Kt 版：[AndroidProject-Kotlin](https://github.com/getActivity/AndroidProject-Kotlin) ![](https://img.shields.io/github/stars/getActivity/AndroidProject-Kotlin.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidProject-Kotlin.svg)
 
-* 吐司框架：[ToastUtils](https://github.com/getActivity/ToastUtils)
+* 权限框架：[XXPermissions](https://github.com/getActivity/XXPermissions) ![](https://img.shields.io/github/stars/getActivity/XXPermissions.svg) ![](https://img.shields.io/github/forks/getActivity/XXPermissions.svg)
 
-* 权限框架：[XXPermissions](https://github.com/getActivity/XXPermissions)
+* 吐司框架：[ToastUtils](https://github.com/getActivity/ToastUtils) ![](https://img.shields.io/github/stars/getActivity/ToastUtils.svg) ![](https://img.shields.io/github/forks/getActivity/ToastUtils.svg)
 
-* 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar)
+* 网络框架：[EasyHttp](https://github.com/getActivity/EasyHttp) ![](https://img.shields.io/github/stars/getActivity/EasyHttp.svg) ![](https://img.shields.io/github/forks/getActivity/EasyHttp.svg)
 
-* 悬浮窗框架：[XToast](https://github.com/getActivity/XToast)
+* 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar) ![](https://img.shields.io/github/stars/getActivity/TitleBar.svg) ![](https://img.shields.io/github/forks/getActivity/TitleBar.svg)
 
-* 国际化框架：[MultiLanguages](https://github.com/getActivity/MultiLanguages)
+* 悬浮窗框架：[XToast](https://github.com/getActivity/XToast) ![](https://img.shields.io/github/stars/getActivity/XToast.svg) ![](https://img.shields.io/github/forks/getActivity/XToast.svg)
 
-* 日志查看框架：[Logcat](https://github.com/getActivity/Logcat)
+* Shape 框架：[ShapeView](https://github.com/getActivity/ShapeView) ![](https://img.shields.io/github/stars/getActivity/ShapeView.svg) ![](https://img.shields.io/github/forks/getActivity/ShapeView.svg)
+
+* 语种切换框架：[MultiLanguages](https://github.com/getActivity/MultiLanguages) ![](https://img.shields.io/github/stars/getActivity/MultiLanguages.svg) ![](https://img.shields.io/github/forks/getActivity/MultiLanguages.svg)
+
+* 日志查看框架：[Logcat](https://github.com/getActivity/Logcat) ![](https://img.shields.io/github/stars/getActivity/Logcat.svg) ![](https://img.shields.io/github/forks/getActivity/Logcat.svg)
+
+* Android 版本适配：[AndroidVersionAdapter](https://github.com/getActivity/AndroidVersionAdapter) ![](https://img.shields.io/github/stars/getActivity/AndroidVersionAdapter.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidVersionAdapter.svg)
+
+* Android 代码规范：[AndroidCodeStandard](https://github.com/getActivity/AndroidCodeStandard) ![](https://img.shields.io/github/stars/getActivity/AndroidCodeStandard.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidCodeStandard.svg)
+
+* Android 开源排行榜：[AndroidGithubBoss](https://github.com/getActivity/AndroidGithubBoss) ![](https://img.shields.io/github/stars/getActivity/AndroidGithubBoss.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidGithubBoss.svg)
+
+* Studio 精品插件：[StudioPlugins](https://github.com/getActivity/StudioPlugins) ![](https://img.shields.io/github/stars/getActivity/StudioPlugins.svg) ![](https://img.shields.io/github/forks/getActivity/StudioPlugins.svg)
+
+* 表情包大集合：[EmojiPackage](https://github.com/getActivity/EmojiPackage) ![](https://img.shields.io/github/stars/getActivity/EmojiPackage.svg) ![](https://img.shields.io/github/forks/getActivity/EmojiPackage.svg)
+
+* 省市区 Json 数据：[ProvinceJson](https://github.com/getActivity/ProvinceJson) ![](https://img.shields.io/github/stars/getActivity/ProvinceJson.svg) ![](https://img.shields.io/github/forks/getActivity/ProvinceJson.svg)
 
 #### 微信公众号：Android轮子哥
 
 ![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/official_ccount.png)
 
-#### Android 技术分享 QQ 群：78797078
+#### Android 技术 Q 群：10047167
 
 #### 如果您觉得我的开源库帮你节省了大量的开发时间，请扫描下方的二维码随意打赏，要是能打赏个 10.24 :monkey_face:就太:thumbsup:了。您的支持将鼓励我继续创作:octocat:
 
@@ -189,3 +215,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+```

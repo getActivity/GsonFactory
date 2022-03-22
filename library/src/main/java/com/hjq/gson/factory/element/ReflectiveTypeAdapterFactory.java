@@ -72,7 +72,10 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
         if (Enum.class.isAssignableFrom(raw) && raw != Enum.class) {
             return null;
         }
-        return new ReflectiveTypeAdapter<>(mConstructorConstructor.get(type), getBoundFields(gson, type, raw));
+        ReflectiveTypeAdapter<T> reflectiveTypeAdapter =
+                new ReflectiveTypeAdapter<>(mConstructorConstructor.get(type), getBoundFields(gson, type, raw));
+        reflectiveTypeAdapter.setReflectiveType(type, null);
+        return reflectiveTypeAdapter;
     }
 
     private Map<String, ReflectiveFieldBound> getBoundFields(Gson gson, TypeToken<?> type, Class<?> raw) {

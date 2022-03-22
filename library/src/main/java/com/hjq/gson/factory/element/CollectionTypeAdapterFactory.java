@@ -26,6 +26,7 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         mConstructorConstructor = constructor;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
         Type type = typeToken.getType();
@@ -49,8 +50,9 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         ObjectConstructor<T> constructor = mConstructorConstructor.get(typeToken);
 
         // create() doesn't define a type parameter
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        TypeAdapter<T> result = new CollectionTypeAdapter(gson, elementType, elementTypeAdapter, constructor);
-        return result;
+        CollectionTypeAdapter collectionTypeAdapter =
+                new CollectionTypeAdapter(gson, elementType, elementTypeAdapter, constructor);
+        collectionTypeAdapter.setReflectiveType(typeToken, null);
+        return collectionTypeAdapter;
     }
 }

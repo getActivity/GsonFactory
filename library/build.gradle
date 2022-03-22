@@ -1,19 +1,40 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 11
-        versionCode 52
-        versionName "5.2"
+        versionCode 60
+        versionName "6.0"
     }
+
+    // 使用 JDK 1.8
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+    android.libraryVariants.all { variant ->
+        // aar 输出文件名配置
+        variant.outputs.all { output ->
+            outputFileName = "${rootProject.name}-${android.defaultConfig.versionName}.aar"
+        }
+    }
+}
+
+afterEvaluate {
+    // 排除 BuildConfig.class 和 R.class
+    generateReleaseBuildConfig.enabled = false
+    generateDebugBuildConfig.enabled = false
+    generateReleaseResValues.enabled = false
+    generateDebugResValues.enabled = false
 }
 
 dependencies {
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.9.0'
 }
 
 // 防止编码问题

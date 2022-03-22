@@ -1,5 +1,5 @@
 {
-  "listTest1" : [],
+  "listTest1" : true,
   "listTest2" : {},
   "listTest3" : "",
   "listTest4" : null,
@@ -37,5 +37,8 @@
   "bigDecimal1" : "22",
   "bigDecimal2" : [],
   "bigDecimal3" : {},
-  "bean" : ""
+  "bean1" : "",
+  "bean2" : [],
+  "jsonObject" : [],
+  "jsonArray" : {}
 }

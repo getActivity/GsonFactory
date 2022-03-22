@@ -1,7 +1,6 @@
 package com.hjq.gson.factory.test;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -53,6 +52,7 @@ public final class JsonUnitTest {
     public void onSpecification() {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         String json = getAssetsString(context, "Specification.json");
+        //mGson.toJson(mGson.fromJson(json, JsonBean.class));
         mGson.fromJson(json, JsonBean.class);
     }
 
@@ -60,6 +60,7 @@ public final class JsonUnitTest {
     public void onNoSpecification() {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         String json = getAssetsString(context, "NoSpecification.json");
+        //mGson.toJson(mGson.fromJson(json, JsonBean.class));
         mGson.fromJson(json, JsonBean.class);
     }
 

@@ -127,15 +127,14 @@ public class ReflectiveTypeUtils {
     }
 
     public static TypeAdapter<?> getFieldAdapter(Gson gson, ConstructorConstructor constructor, Field field, TypeToken<?> fieldType, String fieldName) {
+        TypeAdapter<?> adapter = null;
         JsonAdapter annotation = field.getAnnotation(JsonAdapter.class);
         if (annotation != null) {
-            TypeAdapter<?> adapter = getTypeAdapter(constructor, gson, fieldType, annotation);
-            if (adapter != null) {
-                return adapter;
-            }
+            adapter = getTypeAdapter(constructor, gson, fieldType, annotation);
         }
-
-        TypeAdapter<?> adapter = gson.getAdapter(fieldType);
+        if (adapter == null) {
+            adapter = gson.getAdapter(fieldType);
+        }
         if (adapter instanceof CollectionTypeAdapter) {
             ((CollectionTypeAdapter<?>) adapter).setReflectiveType(TypeToken.get(field.getDeclaringClass()), fieldName);
         }

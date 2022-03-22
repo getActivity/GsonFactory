@@ -13,10 +13,15 @@ import com.hjq.gson.factory.data.BooleanTypeAdapter;
 import com.hjq.gson.factory.data.DoubleTypeAdapter;
 import com.hjq.gson.factory.data.FloatTypeAdapter;
 import com.hjq.gson.factory.data.IntegerTypeAdapter;
+import com.hjq.gson.factory.data.JSONArrayTypeAdapter;
+import com.hjq.gson.factory.data.JSONObjectTypeAdapter;
 import com.hjq.gson.factory.data.LongTypeAdapter;
 import com.hjq.gson.factory.data.StringTypeAdapter;
 import com.hjq.gson.factory.element.CollectionTypeAdapterFactory;
 import com.hjq.gson.factory.element.ReflectiveTypeAdapterFactory;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -30,11 +35,12 @@ import java.util.List;
  *    time   : 2020/11/10
  *    desc   : Gson 解析容错适配器
  */
+@SuppressWarnings("unused")
 public final class GsonFactory {
 
     private static final HashMap<Type, InstanceCreator<?>> INSTANCE_CREATORS = new HashMap<>(0);
 
-    private static final List<TypeAdapterFactory> TYPE_ADAPTER_FACTORIES = new ArrayList<TypeAdapterFactory>();
+    private static final List<TypeAdapterFactory> TYPE_ADAPTER_FACTORIES = new ArrayList<>();
 
     private static JsonCallback sJsonCallback;
 
@@ -65,7 +71,7 @@ public final class GsonFactory {
     }
 
     /**
-     * 注册类型适配器
+     * 注册类型解析适配器
      */
     public static void registerTypeAdapterFactory(TypeAdapterFactory factory) {
         TYPE_ADAPTER_FACTORIES.add(factory);
@@ -94,11 +100,8 @@ public final class GsonFactory {
      */
     public static GsonBuilder newGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        for (TypeAdapterFactory typeAdapterFactory : TYPE_ADAPTER_FACTORIES) {
-            gsonBuilder.registerTypeAdapterFactory(typeAdapterFactory);
-        }
-        ConstructorConstructor constructor = new ConstructorConstructor(INSTANCE_CREATORS);
-        return gsonBuilder.registerTypeAdapterFactory(TypeAdapters.newFactory(String.class, new StringTypeAdapter()))
+        ConstructorConstructor constructor = new ConstructorConstructor(INSTANCE_CREATORS, true);
+        gsonBuilder.registerTypeAdapterFactory(TypeAdapters.newFactory(String.class, new StringTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(boolean.class, Boolean.class, new BooleanTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(int.class, Integer.class, new IntegerTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(long.class, Long.class, new LongTypeAdapter()))
@@ -106,6 +109,13 @@ public final class GsonFactory {
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(double.class, Double.class, new DoubleTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(BigDecimal.class, new BigDecimalTypeAdapter()))
                 .registerTypeAdapterFactory(new CollectionTypeAdapterFactory(constructor))
-                .registerTypeAdapterFactory(new ReflectiveTypeAdapterFactory(constructor, FieldNamingPolicy.IDENTITY, Excluder.DEFAULT));
+                .registerTypeAdapterFactory(new ReflectiveTypeAdapterFactory(constructor, FieldNamingPolicy.IDENTITY, Excluder.DEFAULT))
+                .registerTypeAdapterFactory(TypeAdapters.newFactory(JSONObject.class, new JSONObjectTypeAdapter()))
+                .registerTypeAdapterFactory(TypeAdapters.newFactory(JSONArray.class, new JSONArrayTypeAdapter()));
+        // 添加到自定义的类型解析适配器，因为在 GsonBuilder.create 方法中会对 List 进行反转，所以这里需要放到最后的位置上，这样就会优先解析
+        for (TypeAdapterFactory typeAdapterFactory : TYPE_ADAPTER_FACTORIES) {
+            gsonBuilder.registerTypeAdapterFactory(typeAdapterFactory);
+        }
+        return gsonBuilder;
     }
 }
