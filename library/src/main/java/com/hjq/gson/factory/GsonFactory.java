@@ -18,6 +18,7 @@ import com.hjq.gson.factory.data.JSONObjectTypeAdapter;
 import com.hjq.gson.factory.data.LongTypeAdapter;
 import com.hjq.gson.factory.data.StringTypeAdapter;
 import com.hjq.gson.factory.element.CollectionTypeAdapterFactory;
+import com.hjq.gson.factory.element.MapTypeAdapterFactory;
 import com.hjq.gson.factory.element.ReflectiveTypeAdapterFactory;
 
 import org.json.JSONArray;
@@ -110,6 +111,7 @@ public final class GsonFactory {
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(BigDecimal.class, new BigDecimalTypeAdapter()))
                 .registerTypeAdapterFactory(new CollectionTypeAdapterFactory(constructor))
                 .registerTypeAdapterFactory(new ReflectiveTypeAdapterFactory(constructor, FieldNamingPolicy.IDENTITY, Excluder.DEFAULT))
+                .registerTypeAdapterFactory(new MapTypeAdapterFactory(constructor, false))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(JSONObject.class, new JSONObjectTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(JSONArray.class, new JSONArrayTypeAdapter()));
         // 添加到自定义的类型解析适配器，因为在 GsonBuilder.create 方法中会对 List 进行反转，所以这里需要放到最后的位置上，这样就会优先解析

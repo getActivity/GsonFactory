@@ -39,6 +39,8 @@
   "bigDecimal3" : {},
   "bean1" : "",
   "bean2" : [],
+  "map1" : "",
+  "map2" : false,
   "jsonObject" : [],
   "jsonArray" : {}
 }

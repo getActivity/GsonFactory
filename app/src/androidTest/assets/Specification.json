@@ -22,6 +22,12 @@
   "bean2" : {
     "number" : 12345
   },
+  "map1" : {
+    "1" : false
+  },
+  "map2" : {
+    "number" : 123456789
+  },
   "jsonObject" : {
     "key" : "value"
   },

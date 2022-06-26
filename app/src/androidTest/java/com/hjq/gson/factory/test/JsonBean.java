@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  *    author : Android 轮子哥
@@ -62,6 +63,9 @@ public final class JsonBean {
 
     private TestBean bean1;
     private TestBean bean2;
+
+    private Map<String, String> map1;
+    private Map<String, String> map2;
 
     private JSONObject jsonObject;
     private JSONArray jsonArray;

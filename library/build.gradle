@@ -5,8 +5,8 @@ android {
 
     defaultConfig {
         minSdkVersion 11
-        versionCode 60
-        versionName "6.0"
+        versionCode 62
+        versionName "6.2"
     }
 
     // 使用 JDK 1.8

@@ -141,6 +141,9 @@ public class ReflectiveTypeUtils {
         if (adapter instanceof ReflectiveTypeAdapter) {
             ((ReflectiveTypeAdapter<?>) adapter).setReflectiveType(TypeToken.get(field.getDeclaringClass()), fieldName);
         }
+        if (adapter instanceof MapTypeAdapter) {
+            ((MapTypeAdapter<?, ?>) adapter).setReflectiveType(TypeToken.get(field.getDeclaringClass()), fieldName);
+        }
         return adapter;
     }
 

@@ -39,7 +39,7 @@ android {
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:6.0'
+    implementation 'com.github.getActivity:GsonFactory:6.2'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.9.0'
 }
@@ -92,7 +92,13 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 	* `Bean 类`
 
 	* `数组集合`
-	
+
+	* `Map 集合`
+
+	* `JSONArray`
+
+	* `JSONObject`
+
 	* `String`（字符串）
 
 	* `boolean / Boolean`（布尔值）
