@@ -39,9 +39,9 @@ android {
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:6.2'
+    implementation 'com.github.getActivity:GsonFactory:6.3'
     // Json 解析框架：https://github.com/google/gson
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.9.1'
 }
 ```
 
@@ -72,6 +72,9 @@ GsonFactory.registerTypeAdapterFactory(TypeAdapterFactory factory);
 
 // 注册构造函数创建器
 GsonFactory.registerInstanceCreator(Type type, InstanceCreator<?> creator);
+
+// 添加反射访问过滤器
+GsonFactory.addReflectionAccessFilter(ReflectionAccessFilter filter);
 
 // 设置 Json 解析容错监听
 GsonFactory.setJsonCallback(new JsonCallback() {
@@ -115,13 +118,13 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 	
 * **基本涵盖 99.99% 的开发场景**，可以运行 Demo 中的**单元测试**用例来查看效果：
 
-|  数据类型  | 容错的范围 |  数据示例  |
-| :----: | :------: |  :-----: |
-|  bean | 集合、字符串、布尔值、数值 |  `[]`、`""`、`false`、`0`  |
-|  集合 | bean、字符串、布尔值、数值 |  `{}`、`""`、`false`、`0`  |
-|  字符串 | bean、集合、布尔值、数值 |  `{}`、`[]`、`false`、`0`  |
-|  布尔值 | bean、集合、字符串、数值 |  `{}`、`[]`、`""`、`0`  |
-|  数值 |  bean、集合、字符串、布尔值 |  `{}`、`[]`、`""`、`false`  |
+|  数据类型 |        容错的范围           |            数据示例              |
+| :-----: | :--------------------: | :-----------------------: |
+|  bean  |  集合、字符串、布尔值、数值  |  `[]`、`""`、`false`、`0`  |
+|   集合  |  bean、字符串、布尔值、数值 |  `{}`、`""`、`false`、`0`  |
+|  字符串 |   bean、集合、布尔值、数值  |  `{}`、`[]`、`false`、`0`  |
+|  布尔值 |   bean、集合、字符串、数值  |    `{}`、`[]`、`""`、`0`   |
+|   数值  |  bean、集合、字符串、布尔值 |  `{}`、`[]`、`""`、`false` |
 
 * 大家可能觉得 Gson 解析容错没什么，那是因为我们对 Gson 解析失败的场景没有了解过：
 
@@ -138,7 +141,7 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 	* 如果客户端定义的是整数，但后台返回浮点数，框架就对数值进行`取整`并赋值给字段
 
 	* 如果客户端定义布尔值，但是后台返回整数，框架则将`非 0 的数值则赋值为 true，否则为 false`
-	
+
 #### 常见疑问解答
 
 *  Retrofit + RxJava 怎么替换？

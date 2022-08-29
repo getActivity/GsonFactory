@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
+import com.google.gson.ReflectionAccessFilter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.internal.Excluder;
@@ -42,6 +43,8 @@ public final class GsonFactory {
     private static final HashMap<Type, InstanceCreator<?>> INSTANCE_CREATORS = new HashMap<>(0);
 
     private static final List<TypeAdapterFactory> TYPE_ADAPTER_FACTORIES = new ArrayList<>();
+
+    private static final List<ReflectionAccessFilter> REFLECTION_ACCESS_FILTERS = new ArrayList<>();
 
     private static JsonCallback sJsonCallback;
 
@@ -97,11 +100,21 @@ public final class GsonFactory {
     }
 
     /**
+     * 添加反射访问过滤器，同等于 {@link GsonBuilder#addReflectionAccessFilter(ReflectionAccessFilter)}
+     */
+    public void addReflectionAccessFilter(ReflectionAccessFilter filter) {
+        if (filter == null) {
+            return;
+        }
+        REFLECTION_ACCESS_FILTERS.add(0, filter);
+    }
+
+    /**
      * 创建 Gson 构建对象
      */
     public static GsonBuilder newGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        ConstructorConstructor constructor = new ConstructorConstructor(INSTANCE_CREATORS, true);
+        ConstructorConstructor constructor = new ConstructorConstructor(INSTANCE_CREATORS, true, REFLECTION_ACCESS_FILTERS);
         gsonBuilder.registerTypeAdapterFactory(TypeAdapters.newFactory(String.class, new StringTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(boolean.class, Boolean.class, new BooleanTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(int.class, Integer.class, new IntegerTypeAdapter()))
