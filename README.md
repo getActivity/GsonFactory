@@ -1,6 +1,6 @@
 # Gson 解析容错框架
 
-* 项目地址：[Github](https://github.com/getActivity/GsonFactory)、[码云](https://gitee.com/getActivity/GsonFactory)
+* 项目地址：[Github](https://github.com/getActivity/GsonFactory)
 
 #### 集成步骤
 
@@ -30,11 +30,11 @@ dependencyResolutionManagement {
 
 ```groovy
 android {
-	// 支持 JDK 1.8
-	compileOptions {
-		targetCompatibility JavaVersion.VERSION_1_8
-		sourceCompatibility JavaVersion.VERSION_1_8
-	}
+    // 支持 JDK 1.8
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -142,9 +142,9 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 
 	* 如果客户端定义布尔值，但是后台返回整数，框架则将`非 0 的数值则赋值为 true，否则为 false`
 
-#### 常见疑问解答
+## 常见疑问解答
 
-*  Retrofit + RxJava 怎么替换？
+####  Retrofit + RxJava 怎么替换？
 
 ```java
 Retrofit retrofit = new Retrofit.Builder()
@@ -152,15 +152,62 @@ Retrofit retrofit = new Retrofit.Builder()
         .build();
 ```
 
-* 有没有必要处理 Json 解析容错？
+#### 如何替换项目中已有的原生 Gson ？
 
-> 我觉得非常有必要，因为后台返回的数据结构是什么样我们把控不了，但是有一点是肯定的，我们都不希望它崩，因为一个接口的失败导致整个 App 崩溃退出实属不值得，但是 Gson 很敏感，动不动就崩。
+```text
+// 替换调用
+new Gson()
+GsonFactory.getSingletonGson()
+```
 
-* 我们后台用的是 Java，有必要处理容错吗？
+```text
+// 替换导包
+import com.google.gson.Gson
+import com.hjq.gson.factory.GsonFactory
+```
 
-> 如果你们的后台用的是 PHP，那我十分推荐你使用这个框架，因为 PHP 返回的数据结构很乱，这块经历过的人都懂，说多了都是泪，没经历过的人怎么说都不懂。
+```
+// 再手动处理一些没有替换成功的
+new GsonBuilder()
+```
 
-> 如果你们的后台用的是 Java，那么可以根据实际情况而定，可用可不用，但是最好用，作为一种兜底方案，这样就能防止后台突然某一天不讲码德，例如我现在的公司用的就是 Java 后台，但是 Bugly 还是有上报关于 Gson 解析的异常，所以后台的话不能全信。
+#### 有没有必要处理 Json 解析容错？
+
+* 我觉得非常有必要，因为后台返回的数据结构是什么样我们把控不了，但是有一点是肯定的，我们都不希望它崩，因为一个接口的失败导致整个 App 崩溃退出实属不值得，但是 Gson 很敏感，动不动就崩。
+
+#### 我们后台用的是 Java，有必要处理容错吗？
+
+* 如果你们的后台用的是 PHP，那我十分推荐你使用这个框架，因为 PHP 返回的数据结构很乱，这块经历过的人都懂，说多了都是泪，没经历过的人怎么说都不懂。
+
+* 如果你们的后台用的是 Java，那么可以根据实际情况而定，可用可不用，但是最好用，作为一种兜底方案，这样就能防止后台突然某一天不讲码德，例如我现在的公司的后台全是用 Java 开发的，但是 Bugly 还是有上报关于 Gson 解析的异常，下面是通过 `GsonFactory.setJsonCallback` 采集到的数据，大家可以参考参考：
+
+![](picture/bugly_report_error.jpg)
+
+* 粗略估算了一下，总共上报了三千万多次错误，影响设备数三百多万，看到这里你还相信 Java 开发的后台不会有数据容错的问题么？事在人为，Java 只是一种开发语言，并不能担保不会有数据容错的问题，如果后续真的出现了这种问题，主要分为两种情况：
+
+    * 如果 iOS 没有做数据容错，那么锅是后台的，这点是毫无疑问的，后台想甩也甩不开
+
+    * 如果 iOS 做了数据容错，那么很可能的处理结果是，后台和安卓两端的人要被拉出去各挨五十大板：
+
+        * CTO：后台有问题，为什么 iOS 没事，就安卓有事？
+
+        * Android：iOS 那边做了容错，但是 Android 这边没有做
+
+        * CTO：你们为什么不做？这种兜底机制本来不应该就得有的吗？
+
+        * Android：我们用了 Gson 框架，它的机制本身就是这样的。
+
+        * CTO：我不管你们用了什么框架，在这点上客户端崩溃了就是你们不对，又不是我让它崩溃的，是你们自己崩溃的，你看看 iOS，同样的数据结构咋它就没有事呢？这个责任应该有你们 Android 一份子
+
+        * Android：。。。。。。（哑巴吃黄连，有苦说不出）
+
+        * CTO 内心 OS：整个后台都是我在管的，出现这种事情，我可吃不了兜着走，职位最起码得降一级，幸好拉到一个做垫背的来分担一下事故的责任
+
+        * Ps：以上故事纯属虚构，大家看看就好，切勿太过当真
+
+#### 使用了这个框架后，我如何知道出现了 Json 错误，从而保证问题不被掩盖？
+
+* 对于这个问题，解决方案也很简单，只需要在调试模式下，使用原汁原味的 Gson 对象即可，这样一旦后台返回了错误的数据结构，Gson 会立马抛出异常，开发者可以第一时间得知；而到了线上模式，使用经过框架容错的 Gson 对象即可，当后台返回了错误的数据结构，只需要通过框架提供的监听，将这个问题进行上报即可（可上传到后台或者 Bugly 错误列表中）。
 
 #### 作者的其他开源项目
 
@@ -187,6 +234,8 @@ Retrofit retrofit = new Retrofit.Builder()
 * Android 版本适配：[AndroidVersionAdapter](https://github.com/getActivity/AndroidVersionAdapter) ![](https://img.shields.io/github/stars/getActivity/AndroidVersionAdapter.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidVersionAdapter.svg)
 
 * Android 代码规范：[AndroidCodeStandard](https://github.com/getActivity/AndroidCodeStandard) ![](https://img.shields.io/github/stars/getActivity/AndroidCodeStandard.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidCodeStandard.svg)
+
+* Android 资源大汇总：[AndroidIndex](https://github.com/getActivity/AndroidIndex) ![](https://img.shields.io/github/stars/getActivity/AndroidIndex.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidIndex.svg)
 
 * Android 开源排行榜：[AndroidGithubBoss](https://github.com/getActivity/AndroidGithubBoss) ![](https://img.shields.io/github/stars/getActivity/AndroidGithubBoss.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidGithubBoss.svg)
 
