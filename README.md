@@ -107,15 +107,15 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 	* `boolean / Boolean`（布尔值）
 
 	* `int / Integer`（整数，属于数值类）
-	
+
 	* `long / Long`（长整数，属于数值类）
-	
+
 	* `float / Float`（单精度浮点数，属于数值类）
-	
+
 	* `double / Double`（双精度浮点数，属于数值类）
-	
+
 	* `BigDecimal`（精度更高的浮点数，属于数值类）
-	
+
 * **基本涵盖 99.99% 的开发场景**，可以运行 Demo 中的**单元测试**用例来查看效果：
 
 |  数据类型 |        容错的范围           |            数据示例              |
@@ -144,7 +144,7 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 
 ## 常见疑问解答
 
-####  Retrofit + RxJava 怎么替换？
+####  Retrofit 怎么替换 Gson？
 
 ```java
 Retrofit retrofit = new Retrofit.Builder()
@@ -207,7 +207,7 @@ new GsonBuilder()
 
 #### 使用了这个框架后，我如何知道出现了 Json 错误，从而保证问题不被掩盖？
 
-* 对于这个问题，解决方案也很简单，使用 `GsonFactory.setSingletonGson` API，如果后台返回了错误的数据结构，在调试模式下，直接抛出异常即可，开发者可以第一时间得知；而到了线上模式，对这个问题进行上报即可，保证不漏掉任何一个问题（可上传到后台或者 Bugly 错误列表中），示例代码如下：
+* 对于这个问题，解决方案也很简单，使用 `GsonFactory.setJsonCallback` API，如果后台返回了错误的数据结构，在调试模式下，直接抛出异常即可，开发者可以第一时间得知；而到了线上模式，对这个问题进行上报即可，保证不漏掉任何一个问题（可上传到后台或者 Bugly 错误列表中），示例代码如下：
 
 ```java
 // 设置 Json 解析容错监听
