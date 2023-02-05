@@ -1,6 +1,7 @@
 package com.hjq.gson.factory.test;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 
@@ -9,7 +10,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonToken;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.gson.factory.JsonCallback;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import org.junit.After;
 import org.junit.Before;
@@ -35,15 +35,16 @@ public final class JsonUnitTest {
      */
     @Before
     public void onTestBefore() {
+        // CrashReport.initCrashReport(InstrumentationRegistry.getInstrumentation().getContext());
         mGson = GsonFactory.getSingletonGson();
         // 设置 Json 解析容错监听
         GsonFactory.setJsonCallback(new JsonCallback() {
 
             @Override
             public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
-                // Log.e("GsonFactory", "类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
+                Log.e("GsonFactory", "类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
                 // 上报到 Bugly 错误列表
-                CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
+                // CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
             }
         });
     }

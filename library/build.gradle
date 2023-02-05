@@ -5,8 +5,8 @@ android {
 
     defaultConfig {
         minSdkVersion 11
-        versionCode 63
-        versionName "6.3"
+        versionCode 65
+        versionName "6.5"
     }
 
     // 使用 JDK 1.8
@@ -34,7 +34,7 @@ afterEvaluate {
 dependencies {
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
-    implementation 'com.google.code.gson:gson:2.9.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 
 // 防止编码问题

@@ -130,6 +130,6 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
     }
 
     private List<String> getFieldNames(Field field) {
-        return ReflectiveTypeUtils.getFieldName(mFieldNamingPolicy, field);
+        return ReflectiveTypeUtils.getFieldNames(mFieldNamingPolicy, field);
     }
 }

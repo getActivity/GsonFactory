@@ -24,10 +24,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -174,18 +174,22 @@ public class ReflectiveTypeUtils {
         return typeAdapter;
     }
 
-    public static List<String> getFieldName(FieldNamingStrategy fieldNamingPolicy, Field field) {
-        SerializedName serializedName = field.getAnnotation(SerializedName.class);
-        List<String> fieldNames = new LinkedList<>();
-        if (serializedName == null) {
-            fieldNames.add(fieldNamingPolicy.translateName(field));
-        } else {
-            fieldNames.add(serializedName.value());
-            String[] alternates = serializedName.alternate();
-            for (String alternate : alternates) {
-                fieldNames.add(alternate);
-            }
+    public static List<String> getFieldNames(FieldNamingStrategy fieldNamingPolicy, Field field) {
+        SerializedName annotation = field.getAnnotation(SerializedName.class);
+        if (annotation == null) {
+            String name = fieldNamingPolicy.translateName(field);
+            return Collections.singletonList(name);
         }
+
+        String serializedName = annotation.value();
+        String[] alternates = annotation.alternate();
+        if (alternates.length == 0) {
+            return Collections.singletonList(serializedName);
+        }
+
+        List<String> fieldNames = new ArrayList<>(alternates.length + 1);
+        fieldNames.add(serializedName);
+        Collections.addAll(fieldNames, alternates);
         return fieldNames;
     }
 }

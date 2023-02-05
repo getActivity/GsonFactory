@@ -3,6 +3,7 @@ package com.hjq.gson.factory.element;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
+import com.google.gson.internal.bind.SerializationDelegatingTypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -43,14 +44,14 @@ public class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
         // Third preference: reflective type adapter for the runtime type (if it is a sub class of the declared type)
         // Fourth preference: reflective type adapter for the declared type
 
-        TypeAdapter chosen = mDelegate;
+        TypeAdapter chosen;
         Type runtimeType = getRuntimeTypeIfMoreSpecific(mType, value);
         if (runtimeType != mType) {
             TypeAdapter runtimeTypeAdapter = mGson.getAdapter(TypeToken.get(runtimeType));
             if (!(runtimeTypeAdapter instanceof ReflectiveTypeAdapterFactory.Adapter)) {
                 // The user registered a type adapter for the runtime type, so we will use that
                 chosen = runtimeTypeAdapter;
-            } else if (!(mDelegate instanceof ReflectiveTypeAdapterFactory.Adapter)) {
+            } else if (!isReflective(mDelegate)) {
                 // The user registered a type adapter for Base class, so we prefer it over the
                 // reflective type adapter for the runtime type
                 chosen = mDelegate;
@@ -58,16 +59,36 @@ public class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
                 // Use the type adapter for runtime type
                 chosen = runtimeTypeAdapter;
             }
+        } else {
+            chosen = mDelegate;
         }
         chosen.write(out, value);
     }
 
     /**
+     * Returns whether the type adapter uses reflection.
+     *
+     * @param typeAdapter the type adapter to check.
+     */
+    private static boolean isReflective(TypeAdapter<?> typeAdapter) {
+        // Run this in loop in case multiple delegating adapters are nested
+        while (typeAdapter instanceof SerializationDelegatingTypeAdapter) {
+            TypeAdapter<?> delegate = ((SerializationDelegatingTypeAdapter<?>) typeAdapter).getSerializationDelegate();
+            // Break if adapter does not delegate serialization
+            if (delegate == typeAdapter) {
+                break;
+            }
+            typeAdapter = delegate;
+        }
+
+        return typeAdapter instanceof ReflectiveTypeAdapterFactory.Adapter;
+    }
+
+    /**
      * Finds a compatible runtime type if it is more specific
      */
-    private Type getRuntimeTypeIfMoreSpecific(Type type, Object value) {
-        if (value != null
-                && (type == Object.class || type instanceof TypeVariable<?> || type instanceof Class<?>)) {
+    private static Type getRuntimeTypeIfMoreSpecific(Type type, Object value) {
+        if (value != null && (type instanceof Class<?> || type instanceof TypeVariable<?>)) {
             type = value.getClass();
         }
         return type;

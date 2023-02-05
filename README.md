@@ -39,9 +39,9 @@ android {
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:6.3'
+    implementation 'com.github.getActivity:GsonFactory:6.5'
     // Json 解析框架：https://github.com/google/gson
-    implementation 'com.google.code.gson:gson:2.9.1'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
 ```
 
@@ -261,6 +261,8 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 * 表情包大集合：[EmojiPackage](https://github.com/getActivity/EmojiPackage) ![](https://img.shields.io/github/stars/getActivity/EmojiPackage.svg) ![](https://img.shields.io/github/forks/getActivity/EmojiPackage.svg)
 
 * 省市区 Json 数据：[ProvinceJson](https://github.com/getActivity/ProvinceJson) ![](https://img.shields.io/github/stars/getActivity/ProvinceJson.svg) ![](https://img.shields.io/github/forks/getActivity/ProvinceJson.svg)
+
+* Markdown 语法文档：[MarkdownDoc](https://github.com/getActivity/MarkdownDoc) ![](https://img.shields.io/github/stars/getActivity/MarkdownDoc.svg) ![](https://img.shields.io/github/forks/getActivity/MarkdownDoc.svg)
 
 #### 微信公众号：Android轮子哥
 
