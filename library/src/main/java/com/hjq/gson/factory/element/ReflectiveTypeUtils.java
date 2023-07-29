@@ -7,11 +7,9 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.ConstructorConstructor;
-import com.google.gson.internal.Primitives;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -91,9 +89,6 @@ public class ReflectiveTypeUtils {
     public static ReflectiveFieldBound createBoundField(final Gson gson, final ConstructorConstructor constructor, final Field field, final String fieldName,
                                                         final TypeToken<?> fieldType, boolean serialize, boolean deserialize) {
 
-        // 判断是否是基本数据类型
-        final boolean primitive = Primitives.isPrimitive(fieldType.getRawType());
-
         return new ReflectiveFieldBound(fieldName, serialize, deserialize) {
 
             final TypeAdapter<?> typeAdapter = getFieldAdapter(gson, constructor, field, fieldType, fieldName);
@@ -109,9 +104,11 @@ public class ReflectiveTypeUtils {
             @Override
             public void read(JsonReader reader, Object value) throws IOException, IllegalAccessException {
                 Object fieldValue = typeAdapter.read(reader);
-                if (fieldValue != null || !primitive) {
-                    field.set(value, fieldValue);
+                if (fieldValue == null) {
+                    return;
                 }
+                // 如果不为空，则直接赋值
+                field.set(value, fieldValue);
             }
 
             @Override

@@ -21,15 +21,13 @@ import com.hjq.gson.factory.data.StringTypeAdapter;
 import com.hjq.gson.factory.element.CollectionTypeAdapterFactory;
 import com.hjq.gson.factory.element.MapTypeAdapterFactory;
 import com.hjq.gson.factory.element.ReflectiveTypeAdapterFactory;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *    author : Android 轮子哥
@@ -75,18 +73,24 @@ public final class GsonFactory {
     }
 
     /**
-     * 注册类型解析适配器
+     * 设置 Json 解析出错回调对象
      */
-    public static void registerTypeAdapterFactory(TypeAdapterFactory factory) {
-        TYPE_ADAPTER_FACTORIES.add(factory);
-    }
-
     public static void setJsonCallback(JsonCallback callback) {
         GsonFactory.sJsonCallback = callback;
     }
 
+    /**
+     * 获取 Json 解析出错回调对象
+     */
     public static JsonCallback getJsonCallback() {
         return sJsonCallback;
+    }
+
+    /**
+     * 注册类型解析适配器
+     */
+    public static void registerTypeAdapterFactory(TypeAdapterFactory factory) {
+        TYPE_ADAPTER_FACTORIES.add(factory);
     }
 
     /**
