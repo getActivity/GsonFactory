@@ -152,24 +152,24 @@ GsonFactory.setJsonCallback(new JsonCallback() {
 
 #### 适配 Kotlin 默认值介绍
 
-* issue 地址：[issues/24](https://github.com/getActivity/GsonFactory/issues/24)
+* 这个问题来源大家的反馈，issue 地址：[issues/24](https://github.com/getActivity/GsonFactory/issues/24)
 
 * 如果你在 Kotlin 中定义了以下内容的 Bean 类
 
-```
+```kotlin
 class XxxBean {
     
     val age: Int = 18
 }
 ```
 
-* 大家是不是以为在后台没有返回 age 字段的情况下，age 字段的值会等于 18 ？我帮大家测试过了，不但不会等于 18，并且还会吃系统一记 `NullPointerException`。
+* 大家是不是以为在后台没有返回 `age` 字段的情况下，`age` 字段的值会等于 `18` ？我帮大家测试过了，不但不会等于 `18`，并且还会吃系统一记 `NullPointerException`。
 
-* 这是为什么呢？这个问题源于 Gson 解析的机制，我们都知道 Gson 在解析一个 Bean 类的时候，会反射创建一个对象出来，但是大家不知道的是，Gson 会根据 Bean 类的字段名去解析 Json 串中对应的值，然后简单粗暴进行反射赋值，你没有听错，简单粗暴，如果后台没有返回这个 `age` 字段的值，那么 `age` 就会被赋值为空，但是你又在 Kotlin 中声明了 `age` 变量不为空，这个时候塞一个 `null` 值进去，触发 `NullPointerException` 也是在预料之中。
+* 那么这到底是为什么呢？聊到这个就不得不先说一下 Gson 解析的机制，我们都知道 Gson 在解析一个 Bean 类的时候，会反射创建一个对象出来，但是大家不知道的是，Gson 会根据 Bean 类的字段名去解析 Json 串中对应的值，然后简单粗暴进行反射赋值，你没有听错，简单粗暴，如果后台没有返回这个 `age` 字段的值，那么 `age` 就会被赋值为空，但是你又在 Kotlin 中声明了 `age` 变量不为空，这个时候塞一个 `null` 值进去，触发 `NullPointerException` 也是在预料之中。
 
 * 框架目前的处理方案是，如果后台没有返回这个字段的值，又或者返回这个值为空，则不会赋值给类的字段，因为 Gson 那样做是不合理的，会导致我在 Kotlin 上面使用 Gson 是有问题，变量不定义成可空，每次用基本数据类型还得去做判空，定义成非空，一用还会触发 `NullPointerException`，前后夹击，腹背受敌。
 
-* 到这里可能会有人发出疑问了，为什么在 Java 上用没事，偏偏在 Kotlin 上用有问题，你能解释一下这个问题，这个问题也很简单，这是因为 Gson 在反射赋值的时候需要满足两个条件，第一个是值不为空，第二个是类型不是基本数据类型，这两个条件同时满足的情况才会进行赋值，而 Java 和 Kotlin 最大的不同是，Kotlin 没有基本数据类型，只有对象，拿短整数举例，Java 用基本数据类型表示则为 `int`，如果用对象类型表示则为 `Integer`，而 Kotlin 只能用对象类型 `Int` 表示，这下知道为什么了吧。
+* 到这里可能会有人发出疑问了，为什么在 Java 上用没事，偏偏在 Kotlin 上用有问题，你能解释一下这个问题吗？这个问题也很简单，这是因为 Gson 在反射赋值的时候需要满足两个条件，第一个是值不为空，第二个是类型不是基本数据类型，这两个条件同时满足的情况才会进行赋值，而 Java 和 Kotlin 最大的不同是，Kotlin 没有基本数据类型，只有对象，拿短整数举例，Java 用基本数据类型表示则为 `int`，如果用对象类型表示则为 `Integer`，而 Kotlin 只能用对象类型 `Int` 表示，这下知道为什么了吧！
 
 ## 常见疑问解答
 
