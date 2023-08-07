@@ -2,22 +2,18 @@ package com.hjq.gson.factory.test;
 
 import android.content.Context;
 import android.util.Log;
-
 import androidx.test.platform.app.InstrumentationRegistry;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonToken;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.gson.factory.JsonCallback;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *    author : Android 轮子哥
@@ -49,20 +45,36 @@ public final class JsonUnitTest {
         });
     }
 
+    /**
+     * 后台返回正常的 Json 串测试
+     */
     @Test
-    public void onSpecification() {
+    public void parseNormalJsonTest() {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
-        String json = getAssetsString(context, "Specification.json");
+        String json = getAssetsString(context, "NormalJson.json");
         //mGson.toJson(mGson.fromJson(json, JsonBean.class));
         mGson.fromJson(json, JsonBean.class);
     }
 
+    /**
+     * 后台返回异常的 Json 串测试
+     */
     @Test
-    public void onNoSpecification() {
+    public void parseAbnormalJsonTest() {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
-        String json = getAssetsString(context, "NoSpecification.json");
+        String json = getAssetsString(context, "AbnormalJson.json");
         //mGson.toJson(mGson.fromJson(json, JsonBean.class));
         mGson.fromJson(json, JsonBean.class);
+    }
+
+    /**
+     * Kotlin DataClass 默认值测试
+     */
+    @Test
+    public void kotlinDataClassDefaultValueTest() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        String json = getAssetsString(context, "NullJson.json");
+        mGson.fromJson(json, DataClassBean.class);
     }
 
     /**

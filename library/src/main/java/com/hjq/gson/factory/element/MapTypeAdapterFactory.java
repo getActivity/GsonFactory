@@ -4,11 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.$Gson$Types;
-import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.internal.ObjectConstructor;
 import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.reflect.TypeToken;
-
+import com.hjq.gson.factory.constructor.MainConstructor;
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -20,12 +19,12 @@ import java.util.Map;
  */
 public class MapTypeAdapterFactory implements TypeAdapterFactory {
 
-   private final ConstructorConstructor mConstructorConstructor;
+   private final MainConstructor mMainConstructor;
    final boolean mComplexMapKeySerialization;
 
-   public MapTypeAdapterFactory(ConstructorConstructor constructorConstructor,
+   public MapTypeAdapterFactory(MainConstructor mainConstructor,
                                 boolean complexMapKeySerialization) {
-      mConstructorConstructor = constructorConstructor;
+      mMainConstructor = mainConstructor;
       mComplexMapKeySerialization = complexMapKeySerialization;
    }
 
@@ -43,7 +42,7 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
       Type[] keyAndValueTypes = $Gson$Types.getMapKeyAndValueTypes(type, rawTypeOfSrc);
       TypeAdapter<?> keyAdapter = getKeyAdapter(gson, keyAndValueTypes[0]);
       TypeAdapter<?> valueAdapter = gson.getAdapter(TypeToken.get(keyAndValueTypes[1]));
-      ObjectConstructor<T> constructor = mConstructorConstructor.get(typeToken);
+      ObjectConstructor<T> constructor = mMainConstructor.get(typeToken);
 
       // we don't define a type parameter for the key or value types
       MapTypeAdapter result = new MapTypeAdapter(gson, keyAndValueTypes[0], keyAdapter,

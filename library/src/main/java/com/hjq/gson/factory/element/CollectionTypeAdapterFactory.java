@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.$Gson$Types;
-import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.internal.ObjectConstructor;
 import com.google.gson.reflect.TypeToken;
-
+import com.hjq.gson.factory.constructor.MainConstructor;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -20,10 +19,10 @@ import java.util.Collection;
  */
 public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
-    private final ConstructorConstructor mConstructorConstructor;
+    private final MainConstructor mMainConstructor;
 
-    public CollectionTypeAdapterFactory(ConstructorConstructor constructor) {
-        mConstructorConstructor = constructor;
+    public CollectionTypeAdapterFactory(MainConstructor constructor) {
+        mMainConstructor = constructor;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -47,7 +46,7 @@ public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
         Type elementType = $Gson$Types.getCollectionElementType(type, rawType);
         TypeAdapter<?> elementTypeAdapter = gson.getAdapter(TypeToken.get(elementType));
-        ObjectConstructor<T> constructor = mConstructorConstructor.get(typeToken);
+        ObjectConstructor<T> constructor = mMainConstructor.get(typeToken);
 
         // create() doesn't define a type parameter
         CollectionTypeAdapter collectionTypeAdapter =

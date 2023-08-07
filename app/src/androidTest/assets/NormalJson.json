@@ -1,0 +1,45 @@
+{
+  "bean1" : {},
+  "bean2" : {
+    "number" : 12345
+  },
+  "bigDecimal1" : 2.1111111111111112,
+  "bigDecimal2" : 90000000000000009,
+  "booleanTest1" : false,
+  "booleanTest2" : true,
+  "doubleTest1" : 1.1,
+  "doubleTest2" : -1.2,
+  "doubleTest3" : 1.7976931348623157E308,
+  "doubleTest4" : 4.9E-324,
+  "floatTest1" : 1.1,
+  "floatTest2" : -1.1,
+  "floatTest3" : 3.4028235E38,
+  "floatTest4" : 1.4E-45,
+  "intTest1" : 1,
+  "intTest2" : -2,
+  "intTest3" : 2147483647,
+  "intTest4" : -2147483648,
+  "jsonArray" : [
+    true, false, true
+  ],
+  "jsonObject" : {
+    "key" : "value"
+  },
+  "listTest1" : [1, 2],
+  "listTest2" : ["a", "b", "c"],
+  "listTest3" : [1, 2, 3],
+  "listTest4" : [true, false],
+  "longTest1" : 1,
+  "longTest2" : -2,
+  "longTest3" : 9223372036854775807,
+  "longTest4" : -9223372036854775808,
+  "map1" : {
+    "1" : false
+  },
+  "map2" : {
+    "number" : 123456789
+  },
+  "stringTest1" : null,
+  "stringTest2" : "",
+  "stringTest3" : "字符串"
+}

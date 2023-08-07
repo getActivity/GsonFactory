@@ -6,9 +6,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import com.google.gson.ReflectionAccessFilter;
 import com.google.gson.TypeAdapterFactory;
-import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.internal.Excluder;
 import com.google.gson.internal.bind.TypeAdapters;
+import com.hjq.gson.factory.constructor.MainConstructor;
 import com.hjq.gson.factory.data.BigDecimalTypeAdapter;
 import com.hjq.gson.factory.data.BooleanTypeAdapter;
 import com.hjq.gson.factory.data.DoubleTypeAdapter;
@@ -118,7 +118,7 @@ public final class GsonFactory {
      */
     public static GsonBuilder newGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        ConstructorConstructor constructor = new ConstructorConstructor(INSTANCE_CREATORS, true, REFLECTION_ACCESS_FILTERS);
+        MainConstructor constructor = new MainConstructor(INSTANCE_CREATORS, true, REFLECTION_ACCESS_FILTERS);
         gsonBuilder.registerTypeAdapterFactory(TypeAdapters.newFactory(String.class, new StringTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(boolean.class, Boolean.class, new BooleanTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(int.class, Integer.class, new IntegerTypeAdapter()))

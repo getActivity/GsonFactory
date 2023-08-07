@@ -6,10 +6,10 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.hjq.gson.factory.constructor.MainConstructor;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -86,7 +86,7 @@ public class ReflectiveTypeUtils {
         return TYPE_TOKENS.contains(clazz);
     }
 
-    public static ReflectiveFieldBound createBoundField(final Gson gson, final ConstructorConstructor constructor, final Field field, final String fieldName,
+    public static ReflectiveFieldBound createBoundField(final Gson gson, final MainConstructor constructor, final Field field, final String fieldName,
                                                         final TypeToken<?> fieldType, boolean serialize, boolean deserialize) {
 
         return new ReflectiveFieldBound(fieldName, serialize, deserialize) {
@@ -107,7 +107,12 @@ public class ReflectiveTypeUtils {
                 if (fieldValue == null) {
                     return;
                 }
-                // 如果不为空，则直接赋值
+                // 如果不为空，则直接赋值，之所以这样写的原因是
+                // 当后台给某个字段赋值 null，例如 { "age" : null } 这种，也会走到这里来
+                // 这样就会导致一个问题，当字段有一个默认值了，后台返回 null 会把默认值给覆盖掉
+                // 如果是在 Kotlin 上面使用，问题会更加严重，明明在字段上面定义了默认值，并且声明了字段不为空
+                // 如果后台不返回还好，就不会走到这里来，啥事没有，但是如果后台硬是返回了 null
+                // Gson 再反射设置进去，这个时候外层的人一旦使用这个字段，就很可能会触发 NullPointerException
                 field.set(value, fieldValue);
             }
 
@@ -123,7 +128,7 @@ public class ReflectiveTypeUtils {
         };
     }
 
-    public static TypeAdapter<?> getFieldAdapter(Gson gson, ConstructorConstructor constructor, Field field, TypeToken<?> fieldType, String fieldName) {
+    public static TypeAdapter<?> getFieldAdapter(Gson gson, MainConstructor constructor, Field field, TypeToken<?> fieldType, String fieldName) {
         TypeAdapter<?> adapter = null;
         JsonAdapter annotation = field.getAnnotation(JsonAdapter.class);
         if (annotation != null) {
@@ -144,7 +149,7 @@ public class ReflectiveTypeUtils {
         return adapter;
     }
 
-    public static TypeAdapter<?> getTypeAdapter(ConstructorConstructor constructor,
+    public static TypeAdapter<?> getTypeAdapter(MainConstructor constructor,
                                                 Gson gson,
                                                 TypeToken<?> fieldType,
                                                 JsonAdapter annotation) {

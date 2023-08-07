@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 31
@@ -7,8 +8,8 @@ android {
         applicationId "com.hjq.gson.factory.demo"
         minSdkVersion 16
         targetSdkVersion 31
-        versionCode 66
-        versionName "6.6"
+        versionCode 80
+        versionName "8.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
@@ -60,19 +61,19 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
+    // Json 解析框架：https://github.com/google/gson
+    // noinspection GradleDependency
+    androidTestImplementation 'com.google.code.gson:gson:2.10.1'
+
     // AndroidX 库：https://github.com/androidx/androidx
     implementation 'androidx.appcompat:appcompat:1.4.0'
     // Material 库：https://github.com/material-components/material-components-android
     implementation 'com.google.android.material:material:1.4.0'
 
-    // Json 解析框架：https://github.com/google/gson
-    // noinspection GradleDependency
-    implementation 'com.google.code.gson:gson:2.10.1'
-
     // 标题栏框架：https://github.com/getActivity/TitleBar
-    implementation 'com.github.getActivity:TitleBar:10.0'
+    implementation 'com.github.getActivity:TitleBar:10.5'
 
     // Bugly 异常捕捉：https://bugly.qq.com/docs/user-guide/instruction-manual-android/?v=20190418140644
-    implementation 'com.tencent.bugly:crashreport:4.0.4'
+    implementation 'com.tencent.bugly:crashreport:4.1.9'
     implementation 'com.tencent.bugly:nativecrashreport:3.9.2'
 }

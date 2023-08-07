@@ -3,9 +3,7 @@ package com.hjq.gson.factory.demo;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 

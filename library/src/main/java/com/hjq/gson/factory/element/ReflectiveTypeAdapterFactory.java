@@ -6,10 +6,9 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.internal.$Gson$Types;
-import com.google.gson.internal.ConstructorConstructor;
 import com.google.gson.internal.Excluder;
 import com.google.gson.reflect.TypeToken;
-
+import com.hjq.gson.factory.constructor.MainConstructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
@@ -26,13 +25,13 @@ import java.util.Map;
  */
 public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
 
-    private final ConstructorConstructor mConstructorConstructor;
+    private final MainConstructor mMainConstructor;
     private final FieldNamingStrategy mFieldNamingPolicy;
     private final Excluder mExcluder;
 
-    public ReflectiveTypeAdapterFactory(ConstructorConstructor constructor,
+    public ReflectiveTypeAdapterFactory(MainConstructor constructor,
                                         FieldNamingStrategy strategy, Excluder excluder) {
-        mConstructorConstructor = constructor;
+        mMainConstructor = constructor;
         mFieldNamingPolicy = strategy;
         mExcluder = excluder;
     }
@@ -73,7 +72,7 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
             return null;
         }
         ReflectiveTypeAdapter<T> reflectiveTypeAdapter =
-                new ReflectiveTypeAdapter<>(mConstructorConstructor.get(type), getBoundFields(gson, type, raw));
+                new ReflectiveTypeAdapter<>(mMainConstructor.get(type), getBoundFields(gson, type, raw));
         reflectiveTypeAdapter.setReflectiveType(type, null);
         return reflectiveTypeAdapter;
     }
@@ -103,7 +102,7 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
                         // only serialize the default name
                         serialize = false;
                     }
-                    ReflectiveFieldBound fieldBound = ReflectiveTypeUtils.createBoundField(gson, mConstructorConstructor, field, name,
+                    ReflectiveFieldBound fieldBound = ReflectiveTypeUtils.createBoundField(gson, mMainConstructor, field, name,
                             TypeToken.get(fieldType), serialize, deserialize);
                     ReflectiveFieldBound replaced = result.put(name, fieldBound);
                     if (previous == null) {
