@@ -177,14 +177,14 @@ data class DataClassBean(val name: String?, val age: Int = 18)
 
 * 如果丢给 Gson 解析，最终会得到以下结果
 
-```
+```text
 name = null
 age = 0
 ```
 
 * age 为什么不等于 18？为什么会等于 0 呢？要知道这个问题的原因，我们需要反编译看一下 DataClassBean 的源码
 
-```
+```java
 public final class DataClassBean {
     private final int age;
     private final String name;
@@ -252,7 +252,7 @@ public final class DataClassBean {
 
 * 不知道大家发现问题没有？DataClassBean 类里面并没有空参构造函数，那 Gson 到底是怎么创建对象的呢？让我们看一段源码
 
-```
+```java
 package com.google.gson.internal;
 
 public final class ConstructorConstructor {
