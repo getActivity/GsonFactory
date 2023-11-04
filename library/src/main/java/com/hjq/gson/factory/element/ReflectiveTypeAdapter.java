@@ -8,8 +8,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.gson.factory.JsonCallback;
-
+import com.hjq.gson.factory.ParseExceptionCallback;
 import java.io.IOException;
 import java.util.Map;
 
@@ -48,9 +47,9 @@ public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
 
         if (jsonToken != JsonToken.BEGIN_OBJECT) {
             in.skipValue();
-            JsonCallback callback = GsonFactory.getJsonCallback();
+            ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
             if (callback != null) {
-                callback.onTypeException(mTypeToken, mFieldName, jsonToken);
+                callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
             }
             return null;
         }
@@ -74,9 +73,10 @@ public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
             } catch (IllegalAccessException e) {
                 throw new AssertionError(e);
             } catch (IllegalArgumentException e) {
-                JsonCallback callback = GsonFactory.getJsonCallback();
+                e.printStackTrace();
+                ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
                 if (callback != null) {
-                    callback.onTypeException(TypeToken.get(instance.getClass()), field.getFieldName(), peek);
+                    callback.onParseObjectException(TypeToken.get(instance.getClass()), field.getFieldName(), peek);
                 }
             }
         }

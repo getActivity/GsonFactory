@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonToken;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.gson.factory.JsonCallback;
+import com.hjq.gson.factory.ParseExceptionCallback;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +24,8 @@ import org.junit.Test;
  */
 public final class JsonUnitTest {
 
+    private static final String TAG = "GsonFactory";
+
     private Gson mGson;
 
     /**
@@ -34,13 +36,32 @@ public final class JsonUnitTest {
         // CrashReport.initCrashReport(InstrumentationRegistry.getInstrumentation().getContext());
         mGson = GsonFactory.getSingletonGson();
         // 设置 Json 解析容错监听
-        GsonFactory.setJsonCallback(new JsonCallback() {
+        GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
 
             @Override
-            public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
-                Log.e("GsonFactory", "类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
-                // 上报到 Bugly 错误列表
-                // CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
+            public void onParseObjectException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
+                handlerGsonParseException("解析对象析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
+            }
+
+            @Override
+            public void onParseListException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken) {
+                handlerGsonParseException("解析 List 异常：" + typeToken + "#" + fieldName + "，后台返回的条目类型为：" + listItemJsonToken);
+            }
+
+            @Override
+            public void onParseMapException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken) {
+                handlerGsonParseException("解析 Map 异常：" + typeToken + "#" + fieldName + "，mapItemKey = " + mapItemKey + "，后台返回的条目类型为：" + mapItemJsonToken);
+            }
+
+            private void handlerGsonParseException(String message) {
+                Log.e(TAG, message);
+                /*
+                if (BuildConfig.DEBUG) {
+                    throw new IllegalArgumentException(message);
+                }  else {
+                    CrashReport.postCatchedException(new IllegalArgumentException(message));
+                }
+                 */
             }
         });
     }
@@ -53,7 +74,8 @@ public final class JsonUnitTest {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         String json = getAssetsString(context, "NormalJson.json");
         //mGson.toJson(mGson.fromJson(json, JsonBean.class));
-        mGson.fromJson(json, JsonBean.class);
+        JsonBean jsonBean = mGson.fromJson(json, JsonBean.class);
+        Log.i(TAG, mGson.toJson(jsonBean));
     }
 
     /**
@@ -64,7 +86,8 @@ public final class JsonUnitTest {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         String json = getAssetsString(context, "AbnormalJson.json");
         //mGson.toJson(mGson.fromJson(json, JsonBean.class));
-        mGson.fromJson(json, JsonBean.class);
+        JsonBean jsonBean = mGson.fromJson(json, JsonBean.class);
+        Log.i(TAG, mGson.toJson(jsonBean));
     }
 
     /**
@@ -74,7 +97,8 @@ public final class JsonUnitTest {
     public void kotlinDataClassDefaultValueTest() {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         String json = getAssetsString(context, "NullJson.json");
-        mGson.fromJson(json, DataClassBean.class);
+        DataClassBean dataClassBean = mGson.fromJson(json, DataClassBean.class);
+        Log.i(TAG, mGson.toJson(dataClassBean));
     }
 
     /**

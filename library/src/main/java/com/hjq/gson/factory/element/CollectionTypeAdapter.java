@@ -8,8 +8,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.gson.factory.JsonCallback;
-
+import com.hjq.gson.factory.ParseExceptionCallback;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -41,28 +40,40 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
     @Override
     public Collection<E> read(JsonReader in) throws IOException {
         JsonToken jsonToken = in.peek();
+        Collection<E> collection = mObjectConstructor.construct();
 
         if (jsonToken == JsonToken.NULL) {
             in.nextNull();
-            return null;
+            return collection;
         }
 
         if (jsonToken != JsonToken.BEGIN_ARRAY) {
             in.skipValue();
-            JsonCallback callback = GsonFactory.getJsonCallback();
+            ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
             if (callback != null) {
-                callback.onTypeException(mTypeToken, mFieldName, jsonToken);
+                callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
             }
-            return null;
+            return collection;
         }
 
-        Collection<E> collection = mObjectConstructor.construct();
         in.beginArray();
         while (in.hasNext()) {
-            E instance = mElementTypeAdapter.read(in);
-            collection.add(instance);
+            JsonToken itemJsonToken = null;
+            try {
+                // 获取 item 条目的类型
+                itemJsonToken = in.peek();
+                E instance = mElementTypeAdapter.read(in);
+                collection.add(instance);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
+                if (callback != null) {
+                    callback.onParseListException(mTypeToken, mFieldName, itemJsonToken);
+                }
+            }
         }
         in.endArray();
+
         return collection;
     }
 

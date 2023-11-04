@@ -2,8 +2,8 @@ package com.hjq.gson.factory.data;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 
 /**
@@ -16,7 +16,8 @@ public class StringTypeAdapter extends TypeAdapter<String> {
 
     @Override
     public String read(JsonReader in) throws IOException {
-        switch (in.peek()) {
+        JsonToken jsonToken = in.peek();
+        switch (jsonToken) {
             case STRING:
             case NUMBER:
                 return in.nextString();
@@ -28,7 +29,7 @@ public class StringTypeAdapter extends TypeAdapter<String> {
                 return null;
             default:
                 in.skipValue();
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("The current parser is of type String, but the data is of type " + jsonToken);
         }
     }
 

@@ -20,7 +20,7 @@ allprojects {
 ```groovy
 dependencyResolutionManagement {
     repositories {
-        // JitPack 远程仓库：https://jitpack.io
+        // JitPack 远程仓库：https://jitpack.io[NameThatColor-1.7.4-fix.jar](..%2FStudioPlugins%2Fplugin%2FNameThatColor-1.7.4-fix.jar)
         maven { url 'https://jitpack.io' }
     }
 }
@@ -39,7 +39,7 @@ android {
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:8.0'
+    implementation 'com.github.getActivity:GsonFactory:9.0'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.10.1'
 }
@@ -76,16 +76,8 @@ GsonFactory.registerInstanceCreator(Type type, InstanceCreator<?> creator);
 // 添加反射访问过滤器
 GsonFactory.addReflectionAccessFilter(ReflectionAccessFilter filter);
 
-// 设置 Json 解析容错监听
-GsonFactory.setJsonCallback(new JsonCallback() {
-
-    @Override
-    public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
-        // Log.e("GsonFactory", "类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
-        // 上报到 Bugly 错误列表中
-        CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
-    }
-});
+// 设置 Json 解析容错回调对象
+GsonFactory.setParseExceptionCallback(ParseExceptionCallback callback);
 ```
 
 #### 框架混淆规则
@@ -164,6 +156,8 @@ class XxxBean {
 * 大家是不是以为在后台返回 `{ "age" : null }`，`age` 字段的值会等于 `18` ？我帮大家测试过了，不会等于 `18`，会等于空。
 
 * 那么这到底是为什么呢？聊到这个就不得不先说一下 Gson 解析的机制，我们都知道 Gson 在解析一个 Bean 类的时候，会反射创建一个对象出来，但是大家不知道的是，Gson 会根据 Bean 类的字段名去解析 Json 串中对应的值，然后简单粗暴进行反射赋值，你没有听错，简单粗暴，如果后台返回这个 `age` 字段的值为空，那么 `age` 就会被赋值为空，但是你又在 Kotlin 中声明了 `age` 变量不为空，外层一调用，触发 `NullPointerException` 也是在预料之中。
+
+* 另外针对 List 和 Map 类型的对象，后台如果有返回 null 或者错误类型数据的时候，框架也会返回一个不为空但是集合大小为 0 的 List 对象或者 Map 对象，避免在 Kotlin 字段上面自定义字段不为空，但是后台返回空的情况导致出现的空指针异常。
 
 * 框架目前的处理方案是，如果后台没有返回这个字段的值，又或者返回这个值为空，则不会赋值给类的字段，因为 Gson 那样做是不合理的，会导致我在 Kotlin 上面使用 Gson 是有问题，变量不定义成可空，每次用基本数据类型还得去做判空，定义成非空，一用还会触发 `NullPointerException`，前后夹击，腹背受敌。
 
@@ -411,7 +405,7 @@ public final class DataClassBean {
 }
 ```
 
-* 框架的解决方案是：反射最后第一个参数类型为 DefaultConstructorMarker，然后传入空对象即可，最后第二个参数类型为 int 的构造函数，并且让最后第二个参数的位运算逻辑为 true，让它走到默认值赋值那里，这样可以选择传入 `Integer.MAX_VALUE`，这样每次使用它去 & 不大于 0 的某个值，都会等于某个值，也就是不会等于 0，这样就能保证它的运算条件一直为 true，也就是使用默认值，其他参数传值的话，如果是基本数据类型，就传入基本数据类型的默认值，如果是对象类型，则直接传入 null。这样就完成了对 Kotlin Data Class 类默认值不生效问题的处理。
+* 框架的解决方案是：反射最后第一个参数类型为 DefaultConstructorMarker，然后传入空对象即可，最后第二个参数类型为 int 的构造函数，并且让最后第二个参数的位运算逻辑为 true，让它走到默认值赋值那里，这样可以选择传入 `Integer.MAX_VALUE`，这样每次使用它去 & 不大于 0 的某个值，都会等于某个值，也就是不会等于 0，这样就能保证它的运算条件一直为 true，也就是使用默认值，其他参数传值的话，如果是基本数据类型，就传入基本数据类型的默认值，如果是对象类型，则直接传入 null。这样就解决了 Gson 反射 Kotlin Data Class 类出现字段默认值不生效的问题。
 
 ## 常见疑问解答
 
@@ -450,7 +444,7 @@ new GsonBuilder()
 
 * 如果你们的后台用的是 PHP，那我十分推荐你使用这个框架，因为 PHP 返回的数据结构很乱，这块经历过的人都懂，说多了都是泪，没经历过的人怎么说都不懂。
 
-* 如果你们的后台用的是 Java，那么可以根据实际情况而定，可用可不用，但是最好用，作为一种兜底方案，这样就能防止后台突然某一天不讲码德，例如我现在的公司的后台全是用 Java 开发的，但是 Bugly 还是有上报关于 Gson 解析的异常，下面是通过 `GsonFactory.setJsonCallback` 采集到的数据，大家可以参考参考：
+* 如果你们的后台用的是 Java，那么可以根据实际情况而定，可用可不用，但是最好用，作为一种兜底方案，这样就能防止后台突然某一天不讲码德，例如我现在的公司的后台全是用 Java 开发的，但是 Bugly 还是有上报关于 Gson 解析的异常，下面是通过 `GsonFactory.setParseExceptionCallback` 采集到的数据，大家可以参考参考：
 
 ![](picture/bugly_report_error.jpg)
 
@@ -478,20 +472,33 @@ new GsonBuilder()
 
 #### 使用了这个框架后，我如何知道出现了 Json 错误，从而保证问题不被掩盖？
 
-* 对于这个问题，解决方案也很简单，使用 `GsonFactory.setJsonCallback` API，如果后台返回了错误的数据结构，在调试模式下，直接抛出异常即可，开发者可以第一时间得知；而到了线上模式，对这个问题进行上报即可，保证不漏掉任何一个问题（可上传到后台或者 Bugly 错误列表中），示例代码如下：
+* 对于这个问题，解决方案也很简单，使用 `GsonFactory.setParseExceptionCallback` API，如果后台返回了错误的数据结构，在调试模式下，直接抛出异常即可，开发者可以第一时间得知；而到了线上模式，对这个问题进行上报即可，保证不漏掉任何一个问题（可上传到后台或者 Bugly 错误列表中），示例代码如下：
 
 ```java
 // 设置 Json 解析容错监听
-GsonFactory.setJsonCallback(new JsonCallback() {
+GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
 
     @Override
-    public void onTypeException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
+    public void onParseObjectException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
+        handlerGsonParseException("解析对象析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
+    }
+
+    @Override
+    public void onParseListException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken) {
+        handlerGsonParseException("解析 List 异常：" + typeToken + "#" + fieldName + "，后台返回的条目类型为：" + listItemJsonToken);
+    }
+
+    @Override
+    public void onParseMapException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken) {
+        handlerGsonParseException("解析 Map 异常：" + typeToken + "#" + fieldName + "，mapItemKey = " + mapItemKey + "，后台返回的条目类型为：" + mapItemJsonToken);
+    }
+    
+    private void handlerGsonParseException(String message) {
+        Log.e(TAG, message);
         if (BuildConfig.DEBUG) {
-            // 直接抛出异常
-            throw new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
-        } else {
-            // 上报到 Bugly 错误列表
-            CrashReport.postCatchedException(new IllegalArgumentException("类型解析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken));
+            throw new IllegalArgumentException(message);
+        }  else {
+            CrashReport.postCatchedException(new IllegalArgumentException(message));
         }
     }
 });

@@ -29,6 +29,7 @@
   "listTest2" : ["a", "b", "c"],
   "listTest3" : [1, 2, 3],
   "listTest4" : [true, false],
+  "listTest5" : ["1.0", "1.1", "1.2"],
   "longTest1" : 1,
   "longTest2" : -2,
   "longTest3" : 9223372036854775807,
@@ -37,8 +38,10 @@
     "1" : false
   },
   "map2" : {
-    "number" : 123456789
+    "a" : 123456789
   },
+  "map3" : {},
+  "map4" : null,
   "stringTest1" : null,
   "stringTest2" : "",
   "stringTest3" : "字符串"

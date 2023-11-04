@@ -3,7 +3,6 @@ package com.hjq.gson.factory.element;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.JsonReaderInternalAccess;
 import com.google.gson.internal.ObjectConstructor;
@@ -13,8 +12,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.gson.factory.JsonCallback;
-
+import com.hjq.gson.factory.ParseExceptionCallback;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -55,12 +53,12 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
     @Override
     public Map<K, V> read(JsonReader in) throws IOException {
         JsonToken jsonToken = in.peek();
+        Map<K, V> map = mConstructor.construct();
+
         if (jsonToken == JsonToken.NULL) {
             in.nextNull();
-            return null;
+            return map;
         }
-
-        Map<K, V> map = mConstructor.construct();
 
         if (jsonToken == JsonToken.BEGIN_ARRAY) {
             in.beginArray();
@@ -73,9 +71,9 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
                     in.endArray();
                 } else {
                     in.skipValue();
-                    JsonCallback callback = GsonFactory.getJsonCallback();
+                    ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
                     if (callback != null) {
-                        callback.onTypeException(mTypeToken, mFieldName, jsonToken);
+                        callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
                     }
                 }
             }
@@ -84,19 +82,28 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
             in.beginObject();
             while (in.hasNext()) {
                 JsonReaderInternalAccess.INSTANCE.promoteNameToValue(in);
-                K key = mKeyTypeAdapter.read(in);
-                V value = mValueTypeAdapter.read(in);
-                V replaced = map.put(key, value);
-                if (replaced != null) {
-                    throw new JsonSyntaxException("duplicate key: " + key);
+                JsonToken itemJsonToken = null;
+                K key = null;
+                try {
+                    key = mKeyTypeAdapter.read(in);
+                    // 获取 item 条目的类型
+                    itemJsonToken = in.peek();
+                    V value = mValueTypeAdapter.read(in);
+                    map.put(key, value);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                    ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
+                    if (callback != null) {
+                        callback.onParseMapException(mTypeToken, mFieldName, String.valueOf(key), itemJsonToken);
+                    }
                 }
             }
             in.endObject();
         } else {
             in.skipValue();
-            JsonCallback callback = GsonFactory.getJsonCallback();
+            ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
             if (callback != null) {
-                callback.onTypeException(mTypeToken, mFieldName, jsonToken);
+                callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
             }
         }
         return map;
@@ -122,7 +129,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
         boolean hasComplexKeys = false;
         List<JsonElement> keys = new ArrayList<>(map.size());
 
-        List<V> values = new ArrayList<V>(map.size());
+        List<V> values = new ArrayList<>(map.size());
         for (Map.Entry<K, V> entry : map.entrySet()) {
             JsonElement keyElement = mKeyTypeAdapter.toJsonTree(entry.getKey());
             keys.add(keyElement);

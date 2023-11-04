@@ -1,11 +1,10 @@
 package com.hjq.gson.factory.test;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *    author : Android 轮子哥
@@ -16,9 +15,10 @@ import java.util.Map;
 public final class JsonBean {
 
     private List<String> listTest1;
-    private List<String> listTest2;
+    private List<Double> listTest2;
     private List<Integer> listTest3;
     private List<Boolean> listTest4;
+    private List<Double> listTest5;
 
     private boolean booleanTest1;
     private boolean booleanTest2;
@@ -66,6 +66,8 @@ public final class JsonBean {
 
     private Map<String, String> map1;
     private Map<String, String> map2;
+    private Map<String, Integer> map3;
+    private Map<String, Integer> map4;
 
     private JSONObject jsonObject;
     private JSONArray jsonArray;

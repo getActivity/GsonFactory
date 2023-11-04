@@ -5,11 +5,9 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
+import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 /**
  *    author : Android 轮子哥
@@ -19,11 +17,11 @@ import java.io.IOException;
  */
 public class JSONObjectTypeAdapter extends TypeAdapter<JSONObject> {
 
-    public TypeAdapter<JsonElement> mProxy = TypeAdapters.JSON_ELEMENT;
+    private static final TypeAdapter<JsonElement> PROXY = TypeAdapters.JSON_ELEMENT;
 
     @Override
     public JSONObject read(JsonReader in) throws IOException {
-        JsonElement read = mProxy.read(in);
+        JsonElement read = PROXY.read(in);
         if (read.isJsonObject()) {
             try {
                 return new JSONObject(read.toString());
@@ -40,6 +38,6 @@ public class JSONObjectTypeAdapter extends TypeAdapter<JSONObject> {
             out.nullValue();
             return;
         }
-        mProxy.write(out, mProxy.fromJson(value.toString()));
+        PROXY.write(out, PROXY.fromJson(value.toString()));
     }
 }

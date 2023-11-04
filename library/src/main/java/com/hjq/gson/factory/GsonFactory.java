@@ -44,7 +44,7 @@ public final class GsonFactory {
 
     private static final List<ReflectionAccessFilter> REFLECTION_ACCESS_FILTERS = new ArrayList<>();
 
-    private static JsonCallback sJsonCallback;
+    private static ParseExceptionCallback sParseExceptionCallback;
 
     private static volatile Gson sGson;
 
@@ -75,15 +75,15 @@ public final class GsonFactory {
     /**
      * 设置 Json 解析出错回调对象
      */
-    public static void setJsonCallback(JsonCallback callback) {
-        GsonFactory.sJsonCallback = callback;
+    public static void setParseExceptionCallback(ParseExceptionCallback callback) {
+        GsonFactory.sParseExceptionCallback = callback;
     }
 
     /**
-     * 获取 Json 解析出错回调对象
+     * 获取 Json 解析出错回调对象（可能为空）
      */
-    public static JsonCallback getJsonCallback() {
-        return sJsonCallback;
+    public static ParseExceptionCallback getParseExceptionCallback() {
+        return sParseExceptionCallback;
     }
 
     /**

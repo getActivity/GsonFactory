@@ -2,8 +2,8 @@ package com.hjq.gson.factory.data;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -17,7 +17,8 @@ public class BigDecimalTypeAdapter extends TypeAdapter<BigDecimal> {
 
     @Override
     public BigDecimal read(JsonReader in) throws IOException {
-        switch (in.peek()) {
+        JsonToken jsonToken = in.peek();
+        switch (jsonToken) {
             case NUMBER:
             case STRING:
                 String result = in.nextString();
@@ -30,7 +31,7 @@ public class BigDecimalTypeAdapter extends TypeAdapter<BigDecimal> {
                 return null;
             default:
                 in.skipValue();
-                return null;
+                throw new IllegalArgumentException("The current parser is of type BigDecimal, but the data is of type " + jsonToken);
         }
     }
 
