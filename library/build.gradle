@@ -55,6 +55,9 @@ tasks.register('sourcesJar', Jar) {
 tasks.register('javadoc', Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    // 排除 Kotlin 相关的类 生成 Java Doc
+    // https://github.com/novoda/bintray-release/issues/71
+    excludes = ['**/*.kt']
 }
 
 tasks.register('javadocJar', Jar) {
