@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class ReflectCreatorConstructor<T> implements ObjectConstructor<T> {
 
-    private final KotlinDataClassDefaultValueConstructor<T> mKotlinDataClassDefaultValueConstructor;
+    private final ObjectConstructor<T> mKotlinDataClassDefaultValueConstructor;
 
     private final Constructor<? super T> mConstructor;
 

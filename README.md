@@ -20,7 +20,7 @@ allprojects {
 ```groovy
 dependencyResolutionManagement {
     repositories {
-        // JitPack 远程仓库：https://jitpack.io[NameThatColor-1.7.4-fix.jar](..%2FStudioPlugins%2Fplugin%2FNameThatColor-1.7.4-fix.jar)
+        // JitPack 远程仓库：https://jitpack.io
         maven { url 'https://jitpack.io' }
     }
 }
@@ -39,13 +39,19 @@ android {
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:9.0'
+    implementation 'com.github.getActivity:GsonFactory:9.2'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.10.1'
+    // Kotlin 反射库：用于反射 Kotlin data class 类对象
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.10'
 }
 ```
 
-* 需要注意的是：Gson 框架必须使用 **2.9.0** 及以上版本，否则将会出现版本兼容问题
+* 需要注意两点：
+
+   * 当前项目必须要有 Kotlin 环境，否则会编译不通过
+
+   * Gson 框架必须使用 **2.9.0** 及以上版本，否则将会出现版本兼容问题
 
 #### 使用文档
 
@@ -166,246 +172,16 @@ class XxxBean {
 * 如果你在 Kotlin 中定义了以下内容的 Bean 类
 
 ```kotlin
-data class DataClassBean(val name: String?, val age: Int = 18)
+data class DataClassBean(val name: String = "Hello")
 ```
 
 * 如果丢给 Gson 解析，最终会得到以下结果
 
 ```text
 name = null
-age = 0
 ```
 
-* age 为什么不等于 18？为什么会等于 0 呢？要知道这个问题的原因，我们需要反编译看一下 DataClassBean 的源码
-
-```java
-public final class DataClassBean {
-    private final int age;
-    private final String name;
-
-    public static /* synthetic */ DataClassBean copy$default(DataClassBean bean, String str, int i, int i2, Object obj) {
-        if ((i2 & 1) != 0) {
-            str = bean.name;
-        }
-        if ((i2 & 2) != 0) {
-            i = bean.age;
-        }
-        return bean.copy(str, i);
-    }
-
-    public final String component1() {
-        return this.name;
-    }
-
-    public final int component2() {
-        return this.age;
-    }
-
-    public final DataClassBean copy(String str, int i) {
-        return new DataClassBean(str, i);
-    }
-
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof DataClassBean) {
-            DataClassBean bean = (DataClassBean) obj;
-            return Intrinsics.areEqual(this.name, bean.name) && this.age == bean.age;
-        }
-        return false;
-    }
-
-    public int hashCode() {
-        String str = this.name;
-        return ((str == null ? 0 : str.hashCode()) * 31) + this.age;
-    }
-
-    public String toString() {
-        return "DataClassBean(name=" + ((Object) this.name) + ", age=" + this.age + ')';
-    }
-
-    public DataClassBean(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    public /* synthetic */ DataClassBean(String str, int i, int i2, DefaultConstructorMarker defaultConstructorMarker) {
-        this(str, (i2 & 2) != 0 ? 18 : i);
-    }
-
-    public final int getAge() {
-        return this.age;
-    }
-
-    public final String getName() {
-        return this.name;
-    }
-}
-```
-
-* 不知道大家发现问题没有？DataClassBean 类里面并没有空参构造函数，那 Gson 到底是怎么创建对象的呢？让我们看一段源码
-
-```java
-package com.google.gson.internal;
-
-public final class ConstructorConstructor {
-
-  public <T> ObjectConstructor<T> get(TypeToken<T> typeToken) {
-  
-    ......
-
-    ObjectConstructor<T> defaultConstructor = newDefaultConstructor(rawType, filterResult);
-    if (defaultConstructor != null) {
-      return defaultConstructor;
-    }
-  
-    ......
-  
-    if (filterResult == FilterResult.ALLOW) {
-      // finally try unsafe
-      return newUnsafeAllocator(rawType);
-    } else {
-      ........
-    }
-  }
-  
-  private <T> ObjectConstructor<T> newUnsafeAllocator(final Class<? super T> rawType) {
-
-    ......
-
-    ObjectConstructor<T> defaultConstructor = newDefaultConstructor(rawType, filterResult);
-    if (defaultConstructor != null) {
-      return defaultConstructor;
-    }
-  
-    ......
-
-    if (useJdkUnsafe) {
-      return new ObjectConstructor<T>() {
-        @Override public T construct() {
-          try {
-            @SuppressWarnings("unchecked")
-            T newInstance = (T) UnsafeAllocator.INSTANCE.newInstance(rawType);
-            return newInstance;
-          } catch (Exception e) {
-            throw new RuntimeException(("Unable to create instance of " + rawType + "."
-                + " Registering an InstanceCreator or a TypeAdapter for this type, or adding a no-args"
-                + " constructor may fix this problem."), e);
-          }
-        }
-      };
-    } else {
-      ......
-    }
-  }
-  
-  private static <T> ObjectConstructor<T> newDefaultConstructor(Class<? super T> rawType, FilterResult filterResult) {
-
-    ......
-
-    final Constructor<? super T> constructor;
-    try {
-      constructor = rawType.getDeclaredConstructor();
-    } catch (NoSuchMethodException e) {
-      return null;
-    }
-
-    ......
-
-    return new ObjectConstructor<T>() {
-      @Override public T construct() {
-        try {
-          @SuppressWarnings("unchecked") // T is the same raw type as is requested
-          T newInstance = (T) constructor.newInstance();
-          return newInstance;
-        }
-        // Note: InstantiationException should be impossible because check at start of method made sure
-        //   that class is not abstract
-        catch (InstantiationException e) {
-          throw new RuntimeException("Failed to invoke constructor '" + ReflectionHelper.constructorToString(constructor) + "'"
-              + " with no args", e);
-        } catch (InvocationTargetException e) {
-          // TODO: don't wrap if cause is unchecked?
-          // TODO: JsonParseException ?
-          throw new RuntimeException("Failed to invoke constructor '" + ReflectionHelper.constructorToString(constructor) + "'"
-              + " with no args", e.getCause());
-        } catch (IllegalAccessException e) {
-          throw ReflectionHelper.createExceptionForUnexpectedIllegalAccess(e);
-        }
-      }
-    };
-  }
-}
-```
-
-```java
-package com.google.gson.internal;
-
-public abstract class UnsafeAllocator {
-
-  public abstract <T> T newInstance(Class<T> c) throws Exception;
-
-  public static final UnsafeAllocator INSTANCE = create();
-
-  private static UnsafeAllocator create() {
-    // try JVM
-    // public class Unsafe {
-    //   public Object allocateInstance(Class<?> type);
-    // }
-    try {
-      Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
-      Field f = unsafeClass.getDeclaredField("theUnsafe");
-      f.setAccessible(true);
-      final Object unsafe = f.get(null);
-      final Method allocateInstance = unsafeClass.getMethod("allocateInstance", Class.class);
-      return new UnsafeAllocator() {
-        @Override
-        @SuppressWarnings("unchecked")
-        public <T> T newInstance(Class<T> c) throws Exception {
-          assertInstantiable(c);
-          return (T) allocateInstance.invoke(unsafe, c);
-        }
-      };
-    } catch (Exception ignored) {
-      // OK: try the next way
-    }
-
-    ......
-  }
-}
-```
-
-* 相信你看完就懂了，Gson 确实是反射创建无参构造函数来创建对象，但是如果没有空参构造函数的情况下，它也会通过另外的手段创建对象，借助 `sun.misc.Unsafe` 创建对象，这样会有一个问题，这样创建出来的对象它不会走任何构造函数，通过查看刚刚反编译出来的 DataClassBean 类，就知道为什么这样 Kotlin 默认值都不会生效了
-
-* 框架的做法很简单，既然没有无参构造函数，那我就通过其他构造函数来创建，就拿 Kotlin 生成的 `DataClassBean(String str, int i, int i2, DefaultConstructorMarker defaultConstructorMarker)` 来创建对象
-
-这个构造函数特别有意思，最后第一个参数是 DefaultConstructorMarker 类，里面啥也没有
-
-```java
-public final class DefaultConstructorMarker {
-    private DefaultConstructorMarker() {
-    }
-}
-```
-
-* 最后第二个参数是参数标记，标记是否使用 data class 定义的默认值
-
-```java
-public final class DataClassBean {
-
-    public /* synthetic */ DataClassBean(String str, int i, int i2, DefaultConstructorMarker defaultConstructorMarker) {
-        this(str, (i2 & 2) != 0 ? 18 : i);
-    }
-
-    public DataClassBean(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-}
-```
-
-* 框架的解决方案是：反射最后第一个参数类型为 DefaultConstructorMarker，然后传入空对象即可，最后第二个参数类型为 int 的构造函数，并且让最后第二个参数的位运算逻辑为 true，让它走到默认值赋值那里，这样可以选择传入 `Integer.MAX_VALUE`，这样每次使用它去 & 不大于 0 的某个值，都会等于某个值，也就是不会等于 0，这样就能保证它的运算条件一直为 true，也就是使用默认值，其他参数传值的话，如果是基本数据类型，就传入基本数据类型的默认值，如果是对象类型，则直接传入 null。这样就解决了 Gson 反射 Kotlin Data Class 类出现字段默认值不生效的问题。
+* `name` 字段为什么不等于 `Hello` ？为什么会等于 `null` 值呢？这是因为 Gson 默认只初始化了 DataClassBean 类的空参构造函数，框架的解决方案很简单粗暴，直接引入 Kotlin 反射库，让它找到 Kotlin data class 自动生成的主构造函数，然后反射创建 Kotlin 类，这样得到的对象，非空字段的默认值都会被保留，这样就解决了 Gson 反射 Kotlin Data Class 类出现字段默认值不生效的问题，目前框架内部已经处理了该问题，外部使用的人无需额外处理该问题，只需要调用框架进行解析即可。
 
 ## 常见疑问解答
 

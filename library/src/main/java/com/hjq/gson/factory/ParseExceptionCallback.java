@@ -25,7 +25,7 @@ public interface ParseExceptionCallback {
      *
      * @param typeToken             类型 Token
      * @param fieldName             字段名称（可能为空）
-     * @param listItemJsonToken     List 条目类型
+     * @param listItemJsonToken     List 条目类型（可能为空）
      */
     void onParseListException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken);
 
@@ -35,7 +35,7 @@ public interface ParseExceptionCallback {
      * @param typeToken             类型 Token
      * @param fieldName             字段名称（可能为空）
      * @param mapItemKey            Map 集合中的 key 值，如果等于为 "null" 字符串，则证明后端返回了错误类型的 key 过来
-     * @param mapItemJsonToken      Map 条目类型
+     * @param mapItemJsonToken      Map 条目类型（可能为空）
      */
     void onParseMapException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken);
 }

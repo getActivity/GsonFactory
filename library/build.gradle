@@ -1,12 +1,13 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 31
 
     defaultConfig {
-        minSdkVersion 11
-        versionCode 900
-        versionName "9.0"
+        minSdkVersion 12
+        versionCode 920
+        versionName "9.2"
     }
 
     // 使用 JDK 1.8
@@ -35,6 +36,8 @@ dependencies {
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
     implementation 'com.google.code.gson:gson:2.10.1'
+    // Kotlin 反射依赖：用于反射 Kotlin data class 类对象
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.10'
 }
 
 // 防止编码问题

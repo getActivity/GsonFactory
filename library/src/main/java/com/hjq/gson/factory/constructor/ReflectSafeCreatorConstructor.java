@@ -11,7 +11,7 @@ import com.google.gson.internal.UnsafeAllocator;
  */
 public final class ReflectSafeCreatorConstructor<T> implements ObjectConstructor<T> {
 
-    private final KotlinDataClassDefaultValueConstructor<T> mKotlinDataClassDefaultValueConstructor;
+    private final ObjectConstructor<T> mKotlinDataClassDefaultValueConstructor;
 
     private final Class<? super T> mRawType;
 
