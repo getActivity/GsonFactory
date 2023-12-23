@@ -39,7 +39,7 @@ android {
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:9.2'
+    implementation 'com.github.getActivity:GsonFactory:9.3'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.10.1'
     // Kotlin 反射库：用于反射 Kotlin data class 类对象

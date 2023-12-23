@@ -94,7 +94,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
                     e.printStackTrace();
                     ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
                     if (callback != null) {
-                        callback.onParseMapException(mTypeToken, mFieldName, String.valueOf(key), itemJsonToken);
+                        callback.onParseMapItemException(mTypeToken, mFieldName, String.valueOf(key), itemJsonToken);
                     }
                 }
             }

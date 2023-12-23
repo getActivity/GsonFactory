@@ -68,7 +68,7 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
                 e.printStackTrace();
                 ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
                 if (callback != null) {
-                    callback.onParseListException(mTypeToken, mFieldName, itemJsonToken);
+                    callback.onParseListItemException(mTypeToken, mFieldName, itemJsonToken);
                 }
             }
         }

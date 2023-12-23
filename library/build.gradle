@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         minSdkVersion 12
-        versionCode 920
-        versionName "9.2"
+        versionCode 930
+        versionName "9.3"
     }
 
     // 使用 JDK 1.8

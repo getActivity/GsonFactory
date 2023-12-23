@@ -2,6 +2,7 @@ package com.hjq.gson.factory.constructor
 
 import com.google.gson.internal.ObjectConstructor
 import kotlin.reflect.KParameter
+import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
 
@@ -33,11 +34,24 @@ class KotlinDataClassDefaultValueConstructor<T : Any>(private val rawType: Class
                 continue
             }
 
-            when {
-                // 判断这个参数是不是可选的
-                constructor.parameters[i].isOptional -> fullInitialized = false
-                // 判断这个参数是否标记为空的
-                constructor.parameters[i].type.isMarkedNullable -> values[i] = null
+            val parameter = constructor.parameters[i]
+
+            // 判断这个参数是不是可选的
+            if (parameter.isOptional) {
+                fullInitialized = false
+            }
+
+            // 判断这个参数是否标记为空的
+            if (parameter.type.isMarkedNullable) {
+                values[i] = null
+            } else if (!parameter.isOptional) {
+                // 如果这个参数没有标记为可空的，并且没有携带默认值
+                // 就需要赋一个默认值给它，否则会实例化构造函数会出现崩溃
+                // java.lang.IllegalArgumentException: method XxxBean.<init> argument 3 has type int, got java.lang.Object
+                // 如果是基本数据类型就一定会出现崩溃，如果是对象的话，需要同时满足以下条件才会出现崩溃
+                // 1. 后台给这个参数返回 null 的情况下
+                // 2. 获取对象的时候，如果没有做判空，也会出现异常
+                values[i] = getTypeDefaultValue(parameter.type)
             }
         }
 
@@ -48,6 +62,30 @@ class KotlinDataClassDefaultValueConstructor<T : Any>(private val rawType: Class
         }
 
         return result as T
+    }
+
+    private fun getTypeDefaultValue(type: KType): Any? {
+        // "class kotlin.Int".endsWith("kotlin.Int")
+        if (String::class.toString().endsWith(type.toString())) {
+            return ""
+        } else if (Byte::class.toString().endsWith(type.toString())) {
+            return 0.toByte()
+        } else if (Short::class.toString().endsWith(type.toString())) {
+            return 0.toShort()
+        } else if (Int::class.toString().endsWith(type.toString())) {
+            return 0
+        } else if (Long::class.toString().endsWith(type.toString())) {
+            return 0L
+        } else if (Float::class.toString().endsWith(type.toString())) {
+            return 0.0f
+        } else if (Double::class.toString().endsWith(type.toString())) {
+            return 0.0
+        } else if (Char::class.toString().endsWith(type.toString())) {
+            return '\u0000'
+        } else if (Boolean::class.toString().endsWith(type.toString())) {
+            return false
+        }
+        return null
     }
 
     /** 一个简单的 Map，它使用参数索引而不是排序或哈希。 */
