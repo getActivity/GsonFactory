@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import com.google.gson.Gson;
 import com.google.gson.internal.ObjectConstructor;
 import com.google.gson.internal.reflect.ReflectionHelper;
 import java.lang.reflect.Constructor;
@@ -17,9 +18,9 @@ public final class ReflectCreatorConstructor<T> implements ObjectConstructor<T> 
 
     private final Constructor<? super T> mConstructor;
 
-    public ReflectCreatorConstructor(Class<? super T> rawType, Constructor<? super T> constructor) {
+    public ReflectCreatorConstructor(MainConstructor mainConstructor, Gson gson, Class<? super T> rawType, Constructor<? super T> constructor) {
         mConstructor = constructor;
-        mKotlinDataClassDefaultValueConstructor = new KotlinDataClassDefaultValueConstructor<>(rawType);
+        mKotlinDataClassDefaultValueConstructor = new KotlinDataClassDefaultValueConstructor<>(mainConstructor, gson, rawType);
     }
 
     @SuppressWarnings("unchecked")

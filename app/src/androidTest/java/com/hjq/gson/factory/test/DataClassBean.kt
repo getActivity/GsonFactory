@@ -1,10 +1,13 @@
 package com.hjq.gson.factory.test
 
 data class DataClassBean(
-    val name: String = "轮子哥",
-    val alias: String,
-    val address: String? = "",
-    val age: Int = 20,
-    val weight: Int,
-    val stature: Int? = 180,
+    var name: String = "轮子哥",
+    var alias: String,
+    var address: String? = "",
+    var company: String?,
+    var age: Int = 20,
+    var weight: Int,
+    var stature: Int? = 180,
+    var interest: List<String>,
+    var child: DataClassChildBean
 )

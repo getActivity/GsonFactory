@@ -86,12 +86,12 @@ public class ReflectiveTypeUtils {
         return TYPE_TOKENS.contains(clazz);
     }
 
-    public static ReflectiveFieldBound createBoundField(final Gson gson, final MainConstructor constructor, final Field field, final String fieldName,
+    public static ReflectiveFieldBound createBoundField(final Gson gson, final MainConstructor mainConstructor, final Field field, final String fieldName,
                                                         final TypeToken<?> fieldType, boolean serialize, boolean deserialize) {
 
         return new ReflectiveFieldBound(fieldName, serialize, deserialize) {
 
-            final TypeAdapter<?> typeAdapter = getFieldAdapter(gson, constructor, field, fieldType, fieldName);
+            final TypeAdapter<?> typeAdapter = getFieldAdapter(gson, mainConstructor, field, fieldType, fieldName);
 
             @SuppressWarnings({"unchecked", "rawtypes"})
             @Override
@@ -128,11 +128,11 @@ public class ReflectiveTypeUtils {
         };
     }
 
-    public static TypeAdapter<?> getFieldAdapter(Gson gson, MainConstructor constructor, Field field, TypeToken<?> fieldType, String fieldName) {
+    public static TypeAdapter<?> getFieldAdapter(Gson gson, MainConstructor mainConstructor, Field field, TypeToken<?> fieldType, String fieldName) {
         TypeAdapter<?> adapter = null;
         JsonAdapter annotation = field.getAnnotation(JsonAdapter.class);
         if (annotation != null) {
-            adapter = getTypeAdapter(constructor, gson, fieldType, annotation);
+            adapter = getTypeAdapter(mainConstructor, gson, fieldType, annotation);
         }
         if (adapter == null) {
             adapter = gson.getAdapter(fieldType);
@@ -149,7 +149,7 @@ public class ReflectiveTypeUtils {
         return adapter;
     }
 
-    public static TypeAdapter<?> getTypeAdapter(MainConstructor constructor,
+    public static TypeAdapter<?> getTypeAdapter(MainConstructor mainConstructor,
                                                 Gson gson,
                                                 TypeToken<?> fieldType,
                                                 JsonAdapter annotation) {
@@ -158,10 +158,10 @@ public class ReflectiveTypeUtils {
 
         if (TypeAdapter.class.isAssignableFrom(value)) {
             Class<TypeAdapter<?>> typeAdapterClass = (Class<TypeAdapter<?>>) value;
-            typeAdapter = constructor.get(TypeToken.get(typeAdapterClass)).construct();
+            typeAdapter = mainConstructor.get(gson, TypeToken.get(typeAdapterClass)).construct();
         } else if (TypeAdapterFactory.class.isAssignableFrom(value)) {
             Class<TypeAdapterFactory> typeAdapterFactory = (Class<TypeAdapterFactory>) value;
-            typeAdapter = constructor.get(TypeToken.get(typeAdapterFactory))
+            typeAdapter = mainConstructor.get(gson, TypeToken.get(typeAdapterFactory))
                     .construct()
                     .create(gson, fieldType);
         } else {

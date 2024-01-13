@@ -58,7 +58,8 @@ public final class JsonUnitTest {
                 /*
                 if (BuildConfig.DEBUG) {
                     throw new IllegalArgumentException(message);
-                }  else {
+                } else {
+                    // 上报到 Bugly 错误列表中
                     CrashReport.postCatchedException(new IllegalArgumentException(message));
                 }
                  */

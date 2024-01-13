@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import com.google.gson.Gson;
 import com.google.gson.InstanceCreator;
 import com.google.gson.ReflectionAccessFilter;
 import com.google.gson.ReflectionAccessFilter.FilterResult;
@@ -59,7 +60,7 @@ public final class MainConstructor {
         return null;
     }
 
-    public <T> ObjectConstructor<T> get(TypeToken<T> typeToken) {
+    public <T> ObjectConstructor<T> get(Gson gson, TypeToken<T> typeToken) {
         final Type type = typeToken.getType();
         final Class<? super T> rawType = typeToken.getRawType();
 
@@ -88,7 +89,7 @@ public final class MainConstructor {
         }
 
         FilterResult filterResult = ReflectionAccessFilterHelper.getFilterResult(mReflectionFilters, rawType);
-        ObjectConstructor<T> defaultConstructor = newDefaultConstructor(rawType, filterResult);
+        ObjectConstructor<T> defaultConstructor = newDefaultConstructor(this, gson, rawType, filterResult);
         if (defaultConstructor != null) {
             return defaultConstructor;
         }
@@ -109,7 +110,7 @@ public final class MainConstructor {
         // Additionally, since it is not calling any constructor at all, don't use if BLOCK_INACCESSIBLE
         if (filterResult == FilterResult.ALLOW) {
             // finally try unsafe
-            return newUnsafeAllocator(rawType);
+            return newUnsafeAllocator(gson, rawType);
         } else {
             final String message = "Unable to create instance of " + rawType + "; ReflectionAccessFilter "
                 + "does not permit using reflection or Unsafe. Register an InstanceCreator or a TypeAdapter "
@@ -134,7 +135,7 @@ public final class MainConstructor {
         return null;
     }
 
-    private static <T> ObjectConstructor<T> newDefaultConstructor(Class<? super T> rawType, FilterResult filterResult) {
+    private static <T> ObjectConstructor<T> newDefaultConstructor(MainConstructor mainConstructor, Gson gson, Class<? super T> rawType, FilterResult filterResult) {
         // Cannot invoke constructor of abstract class
         if (Modifier.isAbstract(rawType.getModifiers())) {
             return null;
@@ -180,7 +181,7 @@ public final class MainConstructor {
             }
         }
 
-        return new ReflectCreatorConstructor<>(rawType, constructor);
+        return new ReflectCreatorConstructor<>(mainConstructor, gson, rawType, constructor);
     }
 
     /**
@@ -228,9 +229,9 @@ public final class MainConstructor {
         return null;
     }
 
-    private <T> ObjectConstructor<T> newUnsafeAllocator(final Class<? super T> rawType) {
+    private <T> ObjectConstructor<T> newUnsafeAllocator(Gson gson, final Class<? super T> rawType) {
         if (mUseJdkUnsafe) {
-            return new ReflectSafeCreatorConstructor<>(rawType);
+            return new ReflectSafeCreatorConstructor<>(this, gson, rawType);
         } else {
             final String exceptionMessage = "Unable to create instance of " + rawType + "; usage of JDK Unsafe "
                 + "is disabled. Registering an InstanceCreator or a TypeAdapter for this type, adding a no-args "

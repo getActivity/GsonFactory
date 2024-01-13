@@ -39,7 +39,7 @@ android {
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:9.3'
+    implementation 'com.github.getActivity:GsonFactory:9.5'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.10.1'
     // Kotlin 反射库：用于反射 Kotlin data class 类对象
@@ -148,9 +148,9 @@ GsonFactory.setParseExceptionCallback(ParseExceptionCallback callback);
 
 	* 如果客户端定义的是 **int** 或者 **long** 类型，但后台返回浮点数，框架就对数值进行**直接取整**并赋值给字段
 
-#### 适配 Kotlin 空值介绍
+#### 适配 kotlin 空值介绍
 
-* 如果你在 Kotlin 中定义了以下内容的 Bean 类
+* 如果你在 kotlin 中定义了以下内容的 Bean 类
 
 ```kotlin
 class XxxBean {
@@ -163,25 +163,41 @@ class XxxBean {
 
 * 那么这到底是为什么呢？聊到这个就不得不先说一下 Gson 解析的机制，我们都知道 Gson 在解析一个 Bean 类的时候，会反射创建一个对象出来，但是大家不知道的是，Gson 会根据 Bean 类的字段名去解析 Json 串中对应的值，然后简单粗暴进行反射赋值，你没有听错，简单粗暴，如果后台返回这个 `age` 字段的值为空，那么 `age` 就会被赋值为空，但是你又在 Kotlin 中声明了 `age` 变量不为空，外层一调用，触发 `NullPointerException` 也是在预料之中。
 
-* 另外针对 List 和 Map 类型的对象，后台如果有返回 null 或者错误类型数据的时候，框架也会返回一个不为空但是集合大小为 0 的 List 对象或者 Map 对象，避免在 Kotlin 字段上面自定义字段不为空，但是后台返回空的情况导致出现的空指针异常。
+* 另外针对 `List` 和 `Map` 类型的对象，后台如果有返回 null 或者错误类型数据的时候，框架也会返回一个不为空但是集合大小为 0 的 `List` 对象或者 Map 对象，避免在 kotlin 字段上面自定义字段不为空，但是后台返回空的情况导致出现的空指针异常。
 
 * 框架目前的处理方案是，如果后台没有返回这个字段的值，又或者返回这个值为空，则不会赋值给类的字段，因为 Gson 那样做是不合理的，会导致我在 Kotlin 上面使用 Gson 是有问题，变量不定义成可空，每次用基本数据类型还得去做判空，定义成非空，一用还会触发 `NullPointerException`，前后夹击，腹背受敌。
 
-#### 适配 Kotlin 默认值介绍
+#### 适配 kotlin data class 默认值介绍
 
-* 如果你在 Kotlin 中定义了以下内容的 Bean 类
+* 如果你在 kotlin 中定义了以下内容的 Bean 类
 
 ```kotlin
 data class DataClassBean(val name: String = "Hello")
 ```
 
-* 如果丢给 Gson 解析，最终会得到以下结果
+* 如果丢给原生 Gson 解析，最终会得到以下结果
 
 ```text
 name = null
 ```
 
-* `name` 字段为什么不等于 `Hello` ？为什么会等于 `null` 值呢？这是因为 Gson 默认只初始化了 DataClassBean 类的空参构造函数，框架的解决方案很简单粗暴，直接引入 Kotlin 反射库，让它找到 Kotlin data class 自动生成的主构造函数，然后反射创建 Kotlin 类，这样得到的对象，非空字段的默认值都会被保留，这样就解决了 Gson 反射 Kotlin Data Class 类出现字段默认值不生效的问题，目前框架内部已经处理了该问题，外部使用的人无需额外处理该问题，只需要调用框架进行解析即可。
+* `name` 字段为什么不等于 `Hello` ？为什么会等于 `null` 值呢？这是因为 Gson 默认只初始化了 `DataClassBean` 类的空参构造函数，框架的解决方案很简单粗暴，直接引入 kotlin 反射库，让它找到 `kotlin data class` 自动生成的主构造函数，然后反射创建 kotlin 类，这样得到的对象，字段上面的默认值都会被保留，这样就解决了 Gson 反射 `kotlin data class` 类出现字段默认值不生效的问题，目前框架内部已经处理了该问题，外部使用的人无需额外处理该问题，只需要调用框架进行解析即可。
+
+#### 适配 kotlin data class 非空无默认值字段介绍
+
+* 如果你在 Kotlin 中定义了以下内容的 Bean 类
+
+```kotlin
+data class DataClassBean(var name: String)
+```
+
+* 如果丢给原生 [Gson](https://github.com/google/gson/) 解析，无论 Json 是什么值，最终会得到 name 的字段值是空的，而丢给 [moshi](https://github.com/square/moshi) 解析，则会抛出空指针异常，而 GsonFactory 却能正常解析成 `""`，为什么三个框架有三种不同的结果，这是因为三种框架反射 kotlin data class 类不同实现方式导致的，具体看下面的介绍
+
+* Gson：只会反射空参构造函数，即使某个类不存在空参构造函数，也不会反射失败，这是因为 Gson 内部采用了一种特殊的方式来实例化 Class（即使用 `sun.misc.Unsafe` 类的 `allocateInstance(Class<?> clazz)` 方法来创建对象，需要注意的是这个方法是被 `native` 修饰的），所以对象虽然勉强被创建成功了，但是类里面的字段并没有进行初始化，这是 `Unsafe` 类在创建对象的时候绕过了构造函数进行创建（具体它是怎么做到的，这个不是我们要研究的重点），所以为什么 kotlin data class 类型的字段会为空，原因就在这里。
+
+* moshi：而 moshi 用到的方案更加聪明了，它依赖了一个 kotlin 反射库，反射 kotlin data class 类的时候，它找到 kotlin data class 的主构造函数，然后进行反射创建，moshi 之所以这么做，是因为这样反射可以保留 kotlin data class 类字段上面的默认值，但是存在一个致命的问题，像 `(var name: String)` 这种字段是没有默认值的，但是它又没有被标记是可空的，会导致 kotlin 在编译 kotlin data class 类的时候，会对 `name` 字段例行非空检查（如果为空则抛出 `NullPointerException` 异常），所以使用此框架的人需要将代码写法修改成这样 `(var name: String = "")`，否则编译过程不报错，但是一使用 moshi 解析就会报错，我一直认为在 kotlin 类定义 `(var name: String)` 字段是错误的，你既然没有标记为可空的，那么就应该给它赋值，如果不给它赋值，则应该给它标记为可空的，即 `(var name: String?)`，但是令人奇怪的是，明明这样的写法是错误的，kotlin 语法在检查的时候，还是让它编译通过了，我甚是无语，希望 kotlin 官方后续能纠正这一问题吧。
+
+* GsonFactory：在 moshi 框架的基础上进行了改良，即上面提到的一个问题，对一些被定义成非空并且没有被赋值的字段，GsonFactory 会给这些字段赋一个默认值，如果这个字段是基本数据类型，就直接赋值成基本数据类型的默认值，如果是对象类型，则反射创建对象，当然 kotlin data class 类型的字段也不例外，会反射创建一个 kotlin data class 类型的对象赋值到字段上面，这样不会出现一解析报 `NullPointerException` 异常了。
 
 ## 常见疑问解答
 
@@ -242,8 +258,6 @@ new GsonBuilder()
 
         * Android：。。。。。。（哑巴吃黄连，有苦说不出）
 
-        * CTO 内心 OS：整个后台都是我在管的，出现这种事情，后面可能会吃不了兜着走，现在幸好拉到一个做垫背的来分担一下事故的责任。
-
         * Ps：以上故事纯属虚构，大家看看就好，切勿太过当真。不过有一点是真的，若不想日后扯皮，最好还是要留一手。
 
 #### 使用了这个框架后，我如何知道出现了 Json 错误，从而保证问题不被掩盖？
@@ -260,20 +274,20 @@ GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
     }
 
     @Override
-    public void onParseListException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken) {
+    public void onParseListItemException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken) {
         handlerGsonParseException("解析 List 异常：" + typeToken + "#" + fieldName + "，后台返回的条目类型为：" + listItemJsonToken);
     }
 
     @Override
-    public void onParseMapException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken) {
+    public void onParseMapItemException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken) {
         handlerGsonParseException("解析 Map 异常：" + typeToken + "#" + fieldName + "，mapItemKey = " + mapItemKey + "，后台返回的条目类型为：" + mapItemJsonToken);
     }
-    
+
     private void handlerGsonParseException(String message) {
-        Log.e(TAG, message);
         if (BuildConfig.DEBUG) {
             throw new IllegalArgumentException(message);
-        }  else {
+        } else {
+            // 上报到 Bugly 错误列表中
             CrashReport.postCatchedException(new IllegalArgumentException(message));
         }
     }
@@ -333,18 +347,6 @@ GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
 #### 如果您觉得我的开源库帮你节省了大量的开发时间，请扫描下方的二维码随意打赏，要是能打赏个 10.24 :monkey_face:就太:thumbsup:了。您的支持将鼓励我继续创作:octocat:（[点击查看捐赠列表](https://github.com/getActivity/Donate)）
 
 ![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/pay_ali.png) ![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/pay_wechat.png)
-
-#### 广告区
-
-* 我现在任腾讯云服务器推广大使，大家如果有购买服务器的需求，可以通过下面的链接购买
-
-[![](https://upload-dianshi-1255598498.file.myqcloud.com/upload/nodir/345X200-9ae456f58874df499adf7c331c02cb0fed12b81d.jpg)](https://curl.qcloud.com/A6cYskvv)
-
-[【腾讯云】云服务器、云数据库、COS、CDN、短信等云产品特惠热卖中](https://curl.qcloud.com/A6cYskvv)
-
-[![](https://upload-dianshi-1255598498.file.myqcloud.com/345-200-b28f7dee9552f4241ea6a543f15a9798049701d4.jpg)](https://curl.qcloud.com/up4fQsdn)
-
-[【腾讯云】中小企业福利专场，多款刚需产品，满足企业通用场景需求](https://curl.qcloud.com/up4fQsdn)
 
 ## License
 

@@ -8,8 +8,8 @@ android {
         applicationId "com.hjq.gson.factory.demo"
         minSdkVersion 16
         targetSdkVersion 31
-        versionCode 930
-        versionName "9.3"
+        versionCode 950
+        versionName "9.5"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 

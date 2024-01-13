@@ -1,10 +1,13 @@
 package com.hjq.gson.factory.constructor
 
+import com.google.gson.Gson
 import com.google.gson.internal.ObjectConstructor
+import com.google.gson.reflect.TypeToken
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaType
 
 /**
  *    author : Android 轮子哥
@@ -12,7 +15,7 @@ import kotlin.reflect.jvm.isAccessible
  *    time   : 2023/11/25
  *    desc   : Kotlin Data Class 创建器，用于处理反射创建 data class 类导致默认值不生效的问题
  */
-class KotlinDataClassDefaultValueConstructor<T : Any>(private val rawType: Class<*>) :  ObjectConstructor<T?> {
+class KotlinDataClassDefaultValueConstructor<T : Any>(private val mainConstructor: MainConstructor, private val gson: Gson, private val rawType: Class<*>) :  ObjectConstructor<T?> {
 
     companion object {
         /** 构造函数的字段的默认值 */
@@ -25,7 +28,8 @@ class KotlinDataClassDefaultValueConstructor<T : Any>(private val rawType: Class
         val constructor = rawTypeKotlin.primaryConstructor ?: return null
         constructor.isAccessible = true
 
-        var fullInitialized = true
+        // 是否初始化构造函数中的全部参数
+        var initializedAllParameters = true
         val constructorSize = constructor.parameters.size
         val values = Array<Any?>(constructorSize) { ABSENT_VALUE }
 
@@ -36,28 +40,32 @@ class KotlinDataClassDefaultValueConstructor<T : Any>(private val rawType: Class
 
             val parameter = constructor.parameters[i]
 
-            // 判断这个参数是不是可选的
+            // 判断这个参数是否携带了默认值
             if (parameter.isOptional) {
-                fullInitialized = false
+                initializedAllParameters = false
+                continue
             }
 
             // 判断这个参数是否标记为空的
             if (parameter.type.isMarkedNullable) {
                 values[i] = null
-            } else if (!parameter.isOptional) {
+            } else {
                 // 如果这个参数没有标记为可空的，并且没有携带默认值
                 // 就需要赋一个默认值给它，否则会实例化构造函数会出现崩溃
                 // java.lang.IllegalArgumentException: method XxxBean.<init> argument 3 has type int, got java.lang.Object
                 // 如果是基本数据类型就一定会出现崩溃，如果是对象的话，需要同时满足以下条件才会出现崩溃
-                // 1. 后台给这个参数返回 null 的情况下
+                // 1. 后台给这个参数返回 null 的情况下（这种永远不会出现，因为框架内部处理了）
                 // 2. 获取对象的时候，如果没有做判空，也会出现异常
                 values[i] = getTypeDefaultValue(parameter.type)
             }
         }
 
-        val result = if (fullInitialized) {
+        // 判断构造函数上面所有的参数是否都携带了默认值
+        val result = if (initializedAllParameters) {
+            // 如果是的话，则传入元素全为 Any 的数组进去
             constructor.call(*values)
         } else {
+            // 如果不是的话，就传入自定义顺序的 Map 对象（Key 是参数名，Value 是参数值）进去
             constructor.callBy(IndexedParameterMap(constructor.parameters, values))
         }
 
@@ -65,27 +73,22 @@ class KotlinDataClassDefaultValueConstructor<T : Any>(private val rawType: Class
     }
 
     private fun getTypeDefaultValue(type: KType): Any? {
-        // "class kotlin.Int".endsWith("kotlin.Int")
-        if (String::class.toString().endsWith(type.toString())) {
-            return ""
-        } else if (Byte::class.toString().endsWith(type.toString())) {
-            return 0.toByte()
-        } else if (Short::class.toString().endsWith(type.toString())) {
-            return 0.toShort()
-        } else if (Int::class.toString().endsWith(type.toString())) {
-            return 0
-        } else if (Long::class.toString().endsWith(type.toString())) {
-            return 0L
-        } else if (Float::class.toString().endsWith(type.toString())) {
-            return 0.0f
-        } else if (Double::class.toString().endsWith(type.toString())) {
-            return 0.0
-        } else if (Char::class.toString().endsWith(type.toString())) {
-            return '\u0000'
-        } else if (Boolean::class.toString().endsWith(type.toString())) {
-            return false
+        when (type.classifier) {
+            String::class -> return ""
+            Boolean::class -> return false
+            Int::class -> return 0
+            Long::class -> return 0L
+            Float::class -> return 0.0f
+            Double::class -> return 0.0
+            Short::class -> return 0.toShort()
+            Byte::class -> return 0.toByte()
+            Char::class -> return '\u0000'
         }
-        return null
+
+        val javaType = type.javaType
+        val typeToken = TypeToken.get(javaType) ?: return null
+        val objectConstructor = mainConstructor.get(gson, typeToken) ?: return null
+        return objectConstructor.construct()
     }
 
     /** 一个简单的 Map，它使用参数索引而不是排序或哈希。 */

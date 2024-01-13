@@ -29,9 +29,9 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
     private final FieldNamingStrategy mFieldNamingPolicy;
     private final Excluder mExcluder;
 
-    public ReflectiveTypeAdapterFactory(MainConstructor constructor,
+    public ReflectiveTypeAdapterFactory(MainConstructor mainConstructor,
                                         FieldNamingStrategy strategy, Excluder excluder) {
-        mMainConstructor = constructor;
+        mMainConstructor = mainConstructor;
         mFieldNamingPolicy = strategy;
         mExcluder = excluder;
     }
@@ -72,7 +72,7 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
             return null;
         }
         ReflectiveTypeAdapter<T> reflectiveTypeAdapter =
-                new ReflectiveTypeAdapter<>(mMainConstructor.get(type), getBoundFields(gson, type, raw));
+                new ReflectiveTypeAdapter<>(mMainConstructor.get(gson, type), getBoundFields(gson, type, raw));
         reflectiveTypeAdapter.setReflectiveType(type, null);
         return reflectiveTypeAdapter;
     }

@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import com.google.gson.Gson;
 import com.google.gson.internal.ObjectConstructor;
 import com.google.gson.internal.UnsafeAllocator;
 
@@ -15,9 +16,9 @@ public final class ReflectSafeCreatorConstructor<T> implements ObjectConstructor
 
     private final Class<? super T> mRawType;
 
-    public ReflectSafeCreatorConstructor(Class<? super T> rawType) {
+    public ReflectSafeCreatorConstructor(MainConstructor mainConstructor, Gson gson, Class<? super T> rawType) {
         mRawType = rawType;
-        mKotlinDataClassDefaultValueConstructor = new KotlinDataClassDefaultValueConstructor<>(rawType);
+        mKotlinDataClassDefaultValueConstructor = new KotlinDataClassDefaultValueConstructor<>(mainConstructor, gson, rawType);
     }
 
     @SuppressWarnings("unchecked")
