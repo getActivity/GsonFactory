@@ -195,7 +195,7 @@ data class DataClassBean(var name: String)
 
 * Gson：只会反射空参构造函数，即使某个类不存在空参构造函数，也不会反射失败，这是因为 Gson 内部采用了一种特殊的方式来实例化 Class（即使用 `sun.misc.Unsafe` 类的 `allocateInstance(Class<?> clazz)` 方法来创建对象，需要注意的是这个方法是被 `native` 修饰的），所以对象虽然勉强被创建成功了，但是类里面的字段并没有进行初始化，这是 `Unsafe` 类在创建对象的时候绕过了构造函数进行创建（具体它是怎么做到的，这个不是我们要研究的重点），所以为什么 kotlin data class 类型的字段会为空，原因就在这里。
 
-* moshi：而 moshi 用到的方案更加聪明了，它依赖了一个 kotlin 反射库，反射 kotlin data class 类的时候，它找到 kotlin data class 的主构造函数，然后进行反射创建，moshi 之所以这么做，是因为这样反射可以保留 kotlin data class 类字段上面的默认值，但是存在一个致命的问题，像 `(var name: String)` 这种字段是没有默认值的，但是它又没有被标记是可空的，会导致 kotlin 在编译 kotlin data class 类的时候，会对 `name` 字段例行非空检查（如果为空则抛出 `NullPointerException` 异常），所以使用此框架的人需要将代码写法修改成这样 `(var name: String = "")`，否则编译过程不报错，但是一使用 moshi 解析就会报错，我一直认为在 kotlin 类定义 `(var name: String)` 字段是错误的，你既然没有标记为可空的，那么就应该给它赋值，如果不给它赋值，则应该给它标记为可空的，即 `(var name: String?)`，但是令人奇怪的是，明明这样的写法是错误的，kotlin 语法在检查的时候，还是让它编译通过了，我甚是无语，希望 kotlin 官方后续能纠正这一问题吧。
+* moshi：而 moshi 用到的方案更加聪明了，它依赖了一个 kotlin 反射库，反射 kotlin data class 类的时候，它找到 kotlin data class 的主构造函数，然后进行反射创建，moshi 之所以这么做，是因为这样反射可以保留 kotlin data class 类字段上面的默认值，但是存在一个致命的问题，像 `(var name: String)` 这种字段是没有默认值的，但是它又没有被标记是可空的，会导致 kotlin 在编译 kotlin data class 类的时候，会对 `name` 字段例行非空检查（如果为空则抛出 `NullPointerException` 异常），所以使用此框架的人需要将代码写法修改成这样 `(var name: String = "")`，否则编译过程不报错，但是一使用 moshi 解析就会报错，我一直认为在 kotlin 类定义 `(var name: String)` 字段是错误的，你既然没有标记为可空的，那么就应该给它赋值，如果不给它赋值，则应该给它标记为可空的，即 `(var name: String?)`，但是令人奇怪的是，明明这样的写法是错误的，kotlin 语法在检查的时候，还是让它编译通过了，希望 kotlin 官方后续能纠正这一个问题吧。
 
 * GsonFactory：在 moshi 框架的基础上进行了改良，即上面提到的一个问题，对一些被定义成非空并且没有被赋值的字段，GsonFactory 会给这些字段赋一个默认值，如果这个字段是基本数据类型，就直接赋值成基本数据类型的默认值，如果是对象类型，则反射创建对象，当然 kotlin data class 类型的字段也不例外，会反射创建一个 kotlin data class 类型的对象赋值到字段上面，这样不会出现一解析报 `NullPointerException` 异常了。
 
