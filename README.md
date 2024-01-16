@@ -94,6 +94,23 @@ GsonFactory.setParseExceptionCallback(ParseExceptionCallback callback);
 -keep class com.hjq.gson.factory.** {*;}
 ```
 
+#### 不同 Json 解析框架之间的对比
+
+|  功能或细节  | [GsonFactory](https://github.com/getActivity/GsonFactory) | [Gson](https://github.com/google/gson)  | [moshi](https://github.com/square/moshi) | [FastJson](https://github.com/alibaba/fastjson) |
+| :----: | :------: |  :-----: |  :-----: |  :-----: |
+|    对应版本  |  12.6 |  1.30.6  |  1.5.0  |  2.0.28  |
+|    issues 数   |  [![](https://img.shields.io/github/issues/getActivity/GsonFactory.svg)](https://github.com/getActivity/GsonFactory/issues)  |  [![](https://img.shields.io/github/issues/google/gson.svg)](https://github.com/google/gson/issues)  |  [![](https://img.shields.io/github/issues/square/moshi.svg)](https://github.com/square/moshi/issues)  |  [![](https://img.shields.io/github/issues/alibaba/fastjson.svg)](https://github.com/alibaba/fastjson/issues)  |
+|                    框架体积                 | 60 KB + 283 KB | 283 KB | 162 KB | 188 KB |
+|                   框架维护状态               | 维护中 | 维护中 | 维护中 | 停止维护 |
+|         解析错误类型数据时是否能不报错          |  ✅  |  ❌  |  ❌  |  ✅  |
+|    解析到错误类型数据时是否能往下解析其他字段     |  ✅  |  ❌  |  ❌  |  ❌  |
+|     解析错误类型数据时是否能对数据进行智能转换    |  ✅  |  ❌  |  ❌  |  ❌  |
+|      适配 kotlin data class 字段上的默认值    |  ✅  |  ❌  |  ✅  |  ✅  |
+|    适配 kotlin data class 非空无默认值字段    |  ✅  |  ❌  |  ❌  |  ❌  |
+|  是否有跳过解析 Json 中的 null 值（避免空指针）   |  ✅  |  ❌  |  ❌  |  ✅  |
+|    是否支持解析 `org.json.JSONObject` 类型   |  ✅  |  ❌  |  ❌  |  ❌  |
+|    是否支持解析 `org.json.JSONArray` 类型    |  ✅  |  ❌  |  ❌  |  ❌  |
+
 #### 数据类型容错介绍
 
 * 目前支持容错的数据类型有：
@@ -223,7 +240,7 @@ import com.google.gson.Gson
 import com.hjq.gson.factory.GsonFactory
 ```
 
-```
+```text
 // 再手动处理一些没有替换成功的
 new GsonBuilder()
 ```
