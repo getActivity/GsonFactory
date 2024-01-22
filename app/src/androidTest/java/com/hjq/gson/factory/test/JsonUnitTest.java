@@ -3,14 +3,19 @@ package com.hjq.gson.factory.test;
 import android.content.Context;
 import android.util.Log;
 import androidx.test.platform.app.InstrumentationRegistry;
+import com.alibaba.fastjson2.JSON;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonToken;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.gson.factory.ParseExceptionCallback;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.Moshi;
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -100,6 +105,77 @@ public final class JsonUnitTest {
         String json = getAssetsString(context, "NullJson.json");
         DataClassBean dataClassBean = mGson.fromJson(json, DataClassBean.class);
         Log.i(TAG, mGson.toJson(dataClassBean));
+    }
+
+    @Test
+    public void moshiTest() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        Moshi moshi = new Moshi.Builder()
+            .addLast(new KotlinJsonAdapterFactory())
+            .add(BigDecimal.class, new DecimalAdapter())
+            .build();
+
+        try {
+            String json = getAssetsString(context, "NormalJson.json");
+            JsonAdapter<JsonBean> jsonAdapter = moshi.adapter(JsonBean.class);
+            JsonBean jsonBean = jsonAdapter.fromJson(json);
+            Log.i(TAG, "解析通过：" + jsonBean);
+        } catch (Exception e) {
+            Log.i(TAG, "解析失败");
+            e.printStackTrace();
+        }
+
+        try {
+            String json = getAssetsString(context, "AbnormalJson.json");
+            JsonAdapter<JsonBean> jsonAdapter = moshi.adapter(JsonBean.class);
+            JsonBean jsonBean = jsonAdapter.fromJson(json);
+            Log.i(TAG, "解析通过：" + jsonBean);
+        } catch (Exception e) {
+            Log.i(TAG, "解析失败");
+            e.printStackTrace();
+        }
+
+        try {
+            String json = getAssetsString(context, "NullJson.json");
+            JsonAdapter<DataClassBean> jsonAdapter = moshi.adapter(DataClassBean.class);
+            DataClassBean dataClassBean = jsonAdapter.fromJson(json);
+            Log.i(TAG, "解析通过：" + dataClassBean);
+        } catch (Exception e) {
+            Log.i(TAG, "解析失败");
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void fastJsonTest() {
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+
+        try {
+            String json = getAssetsString(context, "NormalJson.json");
+            JsonBean jsonBean = JSON.parseObject(json, JsonBean.class);
+            Log.i(TAG, "解析通过：" + jsonBean);
+        } catch (Exception e) {
+            Log.i(TAG, "解析失败");
+            e.printStackTrace();
+        }
+
+        try {
+            String json = getAssetsString(context, "AbnormalJson.json");
+            JsonBean jsonBean = JSON.parseObject(json, JsonBean.class);
+            Log.i(TAG, "解析通过：" + jsonBean);
+        } catch (Exception e) {
+            Log.i(TAG, "解析失败");
+            e.printStackTrace();
+        }
+
+        try {
+            String json = getAssetsString(context, "NullJson.json");
+            DataClassBean dataClassBean = JSON.parseObject(json, DataClassBean.class);
+            Log.i(TAG, "解析通过：" + dataClassBean);
+        } catch (Exception e) {
+            Log.i(TAG, "解析失败");
+            e.printStackTrace();
+        }
     }
 
     /**

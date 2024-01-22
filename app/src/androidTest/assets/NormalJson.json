@@ -26,7 +26,7 @@
     "key" : "value"
   },
   "listTest1" : [1, 2],
-  "listTest2" : ["a", "b", "c"],
+  "listTest2" : [1.1, 1.2, 1.3],
   "listTest3" : [1, 2, 3],
   "listTest4" : [true, false],
   "listTest5" : ["1.0", "1.1", "1.2"],

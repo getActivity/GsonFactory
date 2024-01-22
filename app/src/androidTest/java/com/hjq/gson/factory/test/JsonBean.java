@@ -64,8 +64,8 @@ public final class JsonBean {
     private TestBean bean1;
     private TestBean bean2;
 
-    private Map<String, String> map1;
-    private Map<String, String> map2;
+    private Map<String, Boolean> map1;
+    private Map<String, Integer> map2;
     private Map<String, Integer> map3;
     private Map<String, Integer> map4;
 
