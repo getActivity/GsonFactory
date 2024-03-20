@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 import com.google.gson.ReflectionAccessFilter;
+import com.google.gson.ToNumberStrategy;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.Excluder;
 import com.google.gson.internal.bind.TypeAdapters;
@@ -21,6 +22,7 @@ import com.hjq.gson.factory.data.StringTypeAdapter;
 import com.hjq.gson.factory.element.CollectionTypeAdapterFactory;
 import com.hjq.gson.factory.element.MapTypeAdapterFactory;
 import com.hjq.gson.factory.element.ReflectiveTypeAdapterFactory;
+import com.hjq.gson.factory.other.AutoToNumberStrategy;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ public final class GsonFactory {
     private static final List<TypeAdapterFactory> TYPE_ADAPTER_FACTORIES = new ArrayList<>();
 
     private static final List<ReflectionAccessFilter> REFLECTION_ACCESS_FILTERS = new ArrayList<>();
+
+    private static ToNumberStrategy sObjectToNumberStrategy = new AutoToNumberStrategy();
 
     private static ParseExceptionCallback sParseExceptionCallback;
 
@@ -106,11 +110,18 @@ public final class GsonFactory {
     /**
      * 添加反射访问过滤器，同等于 {@link GsonBuilder#addReflectionAccessFilter(ReflectionAccessFilter)}
      */
-    public void addReflectionAccessFilter(ReflectionAccessFilter filter) {
+    public static void addReflectionAccessFilter(ReflectionAccessFilter filter) {
         if (filter == null) {
             return;
         }
         REFLECTION_ACCESS_FILTERS.add(0, filter);
+    }
+
+    /**
+     * 设置自动转换数值类型的策略
+     */
+    public static void setObjectToNumberStrategy(ToNumberStrategy objectToNumberStrategy) {
+        GsonFactory.sObjectToNumberStrategy = objectToNumberStrategy;
     }
 
     /**
@@ -119,6 +130,9 @@ public final class GsonFactory {
     public static GsonBuilder newGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         MainConstructor mainConstructor = new MainConstructor(INSTANCE_CREATORS, true, REFLECTION_ACCESS_FILTERS);
+        if (sObjectToNumberStrategy != null) {
+            gsonBuilder.setObjectToNumberStrategy(sObjectToNumberStrategy);
+        }
         gsonBuilder.registerTypeAdapterFactory(TypeAdapters.newFactory(String.class, new StringTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(boolean.class, Boolean.class, new BooleanTypeAdapter()))
                 .registerTypeAdapterFactory(TypeAdapters.newFactory(int.class, Integer.class, new IntegerTypeAdapter()))

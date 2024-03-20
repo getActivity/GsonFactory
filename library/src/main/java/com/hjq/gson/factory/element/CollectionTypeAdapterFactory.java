@@ -7,6 +7,7 @@ import com.google.gson.internal.$Gson$Types;
 import com.google.gson.internal.ObjectConstructor;
 import com.google.gson.reflect.TypeToken;
 import com.hjq.gson.factory.constructor.MainConstructor;
+import com.hjq.gson.factory.other.ReflectiveTypeUtils;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.util.Collection;

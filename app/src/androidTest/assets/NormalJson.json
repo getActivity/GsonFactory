@@ -42,6 +42,11 @@
   },
   "map3" : {},
   "map4" : null,
+  "map5" : {
+    "attitude": 1710126441000,
+    "type": 1,
+    "money": 1.2345
+  },
   "stringTest1" : null,
   "stringTest2" : "",
   "stringTest3" : "字符串"

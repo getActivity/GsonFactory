@@ -65,6 +65,7 @@ public final class JsonBean {
     private Map<String, Integer> map2;
     private Map<String, Integer> map3;
     private Map<String, Integer> map4;
+    private Map<String, Object> map5;
 
     private String stringTest1;
     private String stringTest2;

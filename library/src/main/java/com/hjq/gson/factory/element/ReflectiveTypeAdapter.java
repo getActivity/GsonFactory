@@ -9,6 +9,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.hjq.gson.factory.GsonFactory;
 import com.hjq.gson.factory.ParseExceptionCallback;
+import com.hjq.gson.factory.other.ReflectiveFieldBound;
 import java.io.IOException;
 import java.util.Map;
 

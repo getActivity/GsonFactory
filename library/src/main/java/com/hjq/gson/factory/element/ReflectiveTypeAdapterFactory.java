@@ -9,6 +9,8 @@ import com.google.gson.internal.$Gson$Types;
 import com.google.gson.internal.Excluder;
 import com.google.gson.reflect.TypeToken;
 import com.hjq.gson.factory.constructor.MainConstructor;
+import com.hjq.gson.factory.other.ReflectiveFieldBound;
+import com.hjq.gson.factory.other.ReflectiveTypeUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
