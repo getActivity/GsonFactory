@@ -100,7 +100,7 @@ GsonFactory.setParseExceptionCallback(ParseExceptionCallback callback);
 
 |  功能或细节  | [GsonFactory](https://github.com/getActivity/GsonFactory) | [Gson](https://github.com/google/gson)  | [moshi](https://github.com/square/moshi) | [FastJson](https://github.com/alibaba/fastjson) |
 | :----: | :------: |  :-----: |  :-----: |  :-----: |
-|    对应版本  |  12.6 |  1.30.6  |  1.5.0  |  2.0.28  |
+|    对应版本  |  9.6 |  1.30.6  |  1.5.0  |  2.0.28  |
 |    issues 数   |  [![](https://img.shields.io/github/issues/getActivity/GsonFactory.svg)](https://github.com/getActivity/GsonFactory/issues)  |  [![](https://img.shields.io/github/issues/google/gson.svg)](https://github.com/google/gson/issues)  |  [![](https://img.shields.io/github/issues/square/moshi.svg)](https://github.com/square/moshi/issues)  |  [![](https://img.shields.io/github/issues/alibaba/fastjson.svg)](https://github.com/alibaba/fastjson/issues)  |
 |                    框架体积                 | 60 KB + 283 KB | 283 KB | 162 KB | 188 KB |
 |                   框架维护状态               | 维护中 | 维护中 | 维护中 | 停止维护 |
