@@ -1,15 +1,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply from : '../common.gradle'
 
 android {
-    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.hjq.gson.factory.demo"
         minSdkVersion 26
-        targetSdkVersion 31
-        versionCode 960
-        versionName "9.6"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
@@ -21,12 +18,6 @@ android {
             keyAlias KeyAlias
             keyPassword KeyPassword
         }
-    }
-
-    // 使用 JDK 1.8
-    compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -42,6 +33,7 @@ android {
             signingConfig signingConfigs.config
         }
     }
+    namespace 'com.hjq.gson.factory.demo'
 
     applicationVariants.configureEach { variant ->
         // apk 输出文件名配置
