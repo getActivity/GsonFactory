@@ -218,6 +218,8 @@ data class DataClassBean(var name: String)
 
 * GsonFactory：在 moshi 框架的基础上进行了改良，即上面提到的一个问题，对一些被定义成非空并且没有被赋值的字段，GsonFactory 会给这些字段赋一个默认值，如果这个字段是基本数据类型，就直接赋值成基本数据类型的默认值，如果是对象类型，则反射创建对象，当然 kotlin data class 类型的字段也不例外，会反射创建一个 kotlin data class 类型的对象赋值到字段上面，这样不会出现一解析报 `NullPointerException` 异常了。
 
+* **警告：非常不推荐大家用这种不准确的写法来定义 kotlin data class 字段，因为虽然框架兼容了该问题，但是仅限于 `Android Gradle Plugin 8.5.0` 及以下版本使用，如果在 `Android Gradle Plugin 8.6.0` 及以上的版本使用会导致框架的兼容方案会失效，目前暂无更好的解决方案，详情请见 [GsonFactory/issues/51](https://github.com/getActivity/GsonFactory/issues/51)。**
+
 ## 常见疑问解答
 
 #### Retrofit 怎么替换 Gson？
