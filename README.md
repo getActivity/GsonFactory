@@ -88,13 +88,7 @@ GsonFactory.setParseExceptionCallback(ParseExceptionCallback callback);
 
 #### 框架混淆规则
 
-* 在混淆规则文件 `proguard-rules.pro` 中加入
-
-```text
--keep class com.hjq.gson.factory.** {*;}
-```
-
-* 另外还需要注意不要混淆 kotlin class data 的 bean 类，否则会导致反射 kotlin data class 构造函数出现 ClassNotFoundException 异常，详情请看 [issues/43](https://github.com/getActivity/GsonFactory/issues/43)
+* 需要注意不要混淆 kotlin class data 的 bean 类，否则会导致反射 kotlin data class 构造函数出现 ClassNotFoundException 异常，详情请看 [issues/43](https://github.com/getActivity/GsonFactory/issues/43)
 
 #### 不同 Json 解析框架之间的对比
 
