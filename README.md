@@ -90,6 +90,13 @@ GsonFactory.setParseExceptionCallback(ParseExceptionCallback callback);
 
 * 需要注意不要混淆 kotlin class data 的 bean 类，否则会导致反射 kotlin data class 构造函数出现 ClassNotFoundException 异常，详情请看 [issues/43](https://github.com/getActivity/GsonFactory/issues/43)
 
+```
+# 必须要加上此规则，否则可能会导致 kotlin class data 的 bean 类反射构造函数出现 ClassNotFoundException 异常，xxx 请替换成对应包名
+-keepnames class xxx.xxx.xxx.** {
+    public (...);
+}
+```
+
 #### 不同 Json 解析框架之间的对比
 
 |  功能或细节  | [GsonFactory](https://github.com/getActivity/GsonFactory) | [Gson](https://github.com/google/gson)  | [moshi](https://github.com/square/moshi) | [FastJson](https://github.com/alibaba/fastjson) |
