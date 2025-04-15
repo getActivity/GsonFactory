@@ -3,7 +3,7 @@ package com.hjq.gson.factory.element;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
-import com.google.gson.internal.$Gson$Types;
+import com.google.gson.internal.GsonTypes;
 import com.google.gson.internal.ObjectConstructor;
 import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.reflect.TypeToken;
@@ -38,8 +38,8 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
          return null;
       }
 
-      Class<?> rawTypeOfSrc = $Gson$Types.getRawType(type);
-      Type[] keyAndValueTypes = $Gson$Types.getMapKeyAndValueTypes(type, rawTypeOfSrc);
+      Class<?> rawTypeOfSrc = GsonTypes.getRawType(type);
+      Type[] keyAndValueTypes = GsonTypes.getMapKeyAndValueTypes(type, rawTypeOfSrc);
       TypeAdapter<?> keyAdapter = getKeyAdapter(gson, keyAndValueTypes[0]);
       TypeAdapter<?> valueAdapter = gson.getAdapter(TypeToken.get(keyAndValueTypes[1]));
       ObjectConstructor<T> constructor = mMainConstructor.get(gson, typeToken);

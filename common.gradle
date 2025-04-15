@@ -36,3 +36,11 @@ android {
         setBuildDir(new File(rootDir, "build/${path.replaceAll(':', '/')}"))
     }
 }
+
+dependencies {
+    // 解决升级到 Gson 2.13.0 版本之后，出现 jetified-error_prone_annotations 编译报错的问题
+    // https://stackoverflow.com/questions/79408107/gradle-build-failed-nullpointerexception-in-error-prone-annotations-2-36-0-jar
+    configurations.configureEach {
+        exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+    }
+}

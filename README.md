@@ -41,7 +41,7 @@ dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
     implementation 'com.github.getActivity:GsonFactory:9.6'
     // Json 解析框架：https://github.com/google/gson
-    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.code.gson:gson:2.13.0'
     // Kotlin 反射库：用于反射 Kotlin data class 类对象，1.5.10 请修改成当前项目 Kotlin 的版本号
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.10'
 }
@@ -51,7 +51,7 @@ dependencies {
 
    * 当前项目必须要有 Kotlin 环境，否则会编译不通过
 
-   * Gson 框架必须使用 **2.9.0** 及以上版本，否则将会出现版本兼容问题
+   * Gson 框架必须使用 **2.13.0** 及以上版本，否则将会出现版本兼容问题
 
 #### 使用文档
 
