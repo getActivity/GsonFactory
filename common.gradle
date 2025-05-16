@@ -8,8 +8,8 @@ android {
         minSdk 12
         // Android 版本适配指南：https://github.com/getActivity/AndroidVersionAdapter
         targetSdk 31
-        versionCode 960
-        versionName "9.6"
+        versionCode 1000
+        versionName "10.0"
     }
 
     // 支持 Java JDK 8
