@@ -28,7 +28,7 @@ afterEvaluate {
 dependencies {
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
-    implementation 'com.google.code.gson:gson:2.13.0'
+    implementation 'com.google.code.gson:gson:2.13.1'
     // Kotlin 反射依赖：用于反射 Kotlin data class 类对象
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.10'
 }

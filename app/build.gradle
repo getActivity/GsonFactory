@@ -55,8 +55,8 @@ dependencies {
 
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
-    androidTestImplementation 'com.google.code.gson:gson:2.13.0'
-    implementation 'com.google.code.gson:gson:2.13.0'
+    androidTestImplementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.google.code.gson:gson:2.13.1'
 
     // AndroidX 库：https://github.com/androidx/androidx
     implementation 'androidx.appcompat:appcompat:1.4.0'
