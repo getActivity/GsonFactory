@@ -53,6 +53,14 @@ dependencies {
 
    * Gson 框架必须使用 **2.13.0** 及以上版本，否则将会出现版本兼容问题
 
+   * 如果你升级 Gson 版本之后，出现有关于 [errorprone](https://github.com/google/error-prone) 编译失败问题，可以尝试剔除从 Gson 这块的依赖来解决这一问题
+
+	```groovy
+	implementation ('com.google.code.gson:gson:x.x.x') {
+	    exclude group: 'com.google.errorprone', module: 'error_prone_annotations'
+	}
+	```
+
 #### 使用文档
 
 * 请使用框架返回的 Gson 对象来代替项目中的 Gson 对象
