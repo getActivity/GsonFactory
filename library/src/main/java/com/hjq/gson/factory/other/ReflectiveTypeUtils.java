@@ -95,11 +95,12 @@ public class ReflectiveTypeUtils {
 
         return new ReflectiveFieldBound(fieldName, serialize, deserialize) {
 
-            final TypeAdapter<?> typeAdapter = getFieldAdapter(gson, mainConstructor, field, fieldType, fieldName);
+            final TypeAdapter<?> typeAdapter = getFieldAdapter(gson, mainConstructor, field, fieldType);
 
             @SuppressWarnings({"unchecked", "rawtypes"})
             @Override
             public void write(JsonWriter writer, Object value) throws IOException, IllegalAccessException {
+                updateReflectiveType(typeAdapter, field, fieldName);
                 Object fieldValue = field.get(value);
                 TypeAdapter typeWrapper = new TypeAdapterRuntimeTypeWrapper(gson, typeAdapter, fieldType.getType());
                 typeWrapper.write(writer, fieldValue);
@@ -107,6 +108,7 @@ public class ReflectiveTypeUtils {
 
             @Override
             public void read(JsonReader reader, Object value) throws IOException, IllegalAccessException {
+                updateReflectiveType(typeAdapter, field, fieldName);
                 Object fieldValue = typeAdapter.read(reader);
                 if (fieldValue == null) {
                     return;
@@ -122,17 +124,17 @@ public class ReflectiveTypeUtils {
 
             @Override
             public boolean writeField(Object value) throws IOException, IllegalAccessException {
+                updateReflectiveType(typeAdapter, field, fieldName);
                 if (!isSerialized()) {
                     return false;
                 }
-
                 Object fieldValue = field.get(value);
                 return fieldValue != value;
             }
         };
     }
 
-    public static TypeAdapter<?> getFieldAdapter(Gson gson, MainConstructor mainConstructor, Field field, TypeToken<?> fieldType, String fieldName) {
+    public static TypeAdapter<?> getFieldAdapter(Gson gson, MainConstructor mainConstructor, Field field, TypeToken<?> fieldType) {
         TypeAdapter<?> adapter = null;
         JsonAdapter annotation = field.getAnnotation(JsonAdapter.class);
         if (annotation != null) {
@@ -141,6 +143,10 @@ public class ReflectiveTypeUtils {
         if (adapter == null) {
             adapter = gson.getAdapter(fieldType);
         }
+        return adapter;
+    }
+
+    public static void updateReflectiveType(TypeAdapter<?> adapter, Field field, String fieldName) {
         if (adapter instanceof CollectionTypeAdapter) {
             ((CollectionTypeAdapter<?>) adapter).setReflectiveType(TypeToken.get(field.getDeclaringClass()), fieldName);
         }
@@ -150,7 +156,6 @@ public class ReflectiveTypeUtils {
         if (adapter instanceof MapTypeAdapter) {
             ((MapTypeAdapter<?, ?>) adapter).setReflectiveType(TypeToken.get(field.getDeclaringClass()), fieldName);
         }
-        return adapter;
     }
 
     public static TypeAdapter<?> getTypeAdapter(MainConstructor mainConstructor,
