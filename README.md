@@ -1,3 +1,5 @@
+# [English Doc](README-en.md)
+
 # Gson 解析容错框架
 
 * 项目地址：[Github](https://github.com/getActivity/GsonFactory)
