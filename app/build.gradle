@@ -64,7 +64,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
 
     // 标题栏框架：https://github.com/getActivity/TitleBar
-    implementation 'com.github.getActivity:TitleBar:10.5'
+    implementation 'com.github.getActivity:TitleBar:10.8'
 
     // Bugly 异常捕捉：https://bugly.qq.com/docs/user-guide/instruction-manual-android/?v=20190418140644
     implementation 'com.tencent.bugly:crashreport:4.1.9'
