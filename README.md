@@ -316,11 +316,12 @@ GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
     }
 
     private void handlerGsonParseException(String message) {
+        IllegalArgumentException exception = new IllegalArgumentException(message);
         if (BuildConfig.DEBUG) {
-            throw new IllegalArgumentException(message);
+            throw exception;
         } else {
             // 上报到 Bugly 错误列表中
-            CrashReport.postCatchedException(new IllegalArgumentException(message));
+            Bugly.handleCatchException(Thread.currentThread(), exception, exception.getMessage(), null, true);
         }
     }
 });
