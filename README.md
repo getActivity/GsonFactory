@@ -43,7 +43,7 @@ dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
     implementation 'com.github.getActivity:GsonFactory:10.3'
     // Json 解析框架：https://github.com/google/gson
-    implementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.google.code.gson:gson:2.13.2'
     // Kotlin 反射库：用于反射 Kotlin data class 类对象，1.5.10 请修改成当前项目 Kotlin 的版本号
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.10'
 }
