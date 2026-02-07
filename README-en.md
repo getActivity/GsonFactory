@@ -49,6 +49,13 @@ dependencies {
 }
 ```
 
+* Please add the following configuration to your project's `gradle.properties`. If it has already been added, you can ignore it.
+
+```
+# https://github.com/getActivity/GsonFactory/issues/51
+android.enableR8.fullMode=false
+```
+
 * Two points to note:
 
    * Your project must have a Kotlin environment, otherwise it will not compile
@@ -229,7 +236,7 @@ data class DataClassBean(var name: String)
 
 * GsonFactory: On the basis of moshi, it has been improved, that is, for some fields that are defined as non-null and not assigned values, GsonFactory will assign a default value to these fields. If this field is a basic data type, it will be assigned a default value directly, if it is an object type, it will reflect to create an object, of course, kotlin data class type fields are also reflected to create a kotlin data class type object, which will not cause a `NullPointerException` when parsing.
 
-* **Warning: It is strongly recommended not to define kotlin data class fields in this inaccurate way, because although the framework is compatible with this issue, it is only applicable to `Android Gradle Plugin 8.5.0` and below versions. If you use it in `Android Gradle Plugin 8.6.0` and above versions, the compatibility solution of the framework will be invalid, and there is currently no better solution, please refer to [GsonFactory/issues/51](https://github.com/getActivity/GsonFactory/issues/51) for details.**
+* **Warning: It is strongly recommended not to define kotlin data class fields in this inaccurate way, because although the framework is compatible with this issue, it is only applicable to `Android Gradle Plugin 8.5.0` and below versions. If you use it in `Android Gradle Plugin 8.6.0` and above versions, the compatibility solution of the framework will be invalid, please refer to [GsonFactory/issues/51](https://github.com/getActivity/GsonFactory/issues/51) for details. The current workaround is to add `android.enableR8.fullMode=false` in `gradle.properties`.**
 
 ## Common Questions and Answers
 
