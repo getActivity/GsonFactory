@@ -56,7 +56,7 @@ dependencies {
 android.enableR8.fullMode=false
 ```
 
-* Two points to note:
+* Points to note:
 
    * Your project must have a Kotlin environment, otherwise it will not compile
 
