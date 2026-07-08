@@ -25,9 +25,9 @@ import com.hjq.gson.factory.element.ReflectiveTypeAdapterFactory;
 import com.hjq.gson.factory.other.AutoToNumberStrategy;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -40,11 +40,11 @@ import org.json.JSONObject;
 @SuppressWarnings("unused")
 public final class GsonFactory {
 
-    private static final HashMap<Type, InstanceCreator<?>> INSTANCE_CREATORS = new HashMap<>(0);
+    private static final Map<Type, InstanceCreator<?>> INSTANCE_CREATORS = new ConcurrentHashMap<>(0);
 
-    private static final List<TypeAdapterFactory> TYPE_ADAPTER_FACTORIES = new ArrayList<>();
+    private static final CopyOnWriteArrayList<TypeAdapterFactory> TYPE_ADAPTER_FACTORIES = new CopyOnWriteArrayList<>();
 
-    private static final List<ReflectionAccessFilter> REFLECTION_ACCESS_FILTERS = new ArrayList<>();
+    private static final CopyOnWriteArrayList<ReflectionAccessFilter> REFLECTION_ACCESS_FILTERS = new CopyOnWriteArrayList<>();
 
     private static ToNumberStrategy sObjectToNumberStrategy = new AutoToNumberStrategy();
 
