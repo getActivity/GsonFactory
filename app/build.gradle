@@ -68,9 +68,4 @@ dependencies {
 
     // Bugly 异常捕捉：https://bugly.tds.qq.com/docs/sdk/android/
     implementation 'com.tencent.bugly_16kb:bugly-pro:4.4.7.3'
-
-    implementation 'com.squareup.moshi:moshi:1.12.0'
-    implementation "com.squareup.moshi:moshi-kotlin:1.12.0"
-
-    implementation 'com.alibaba:fastjson:2.0.28'
 }
