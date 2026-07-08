@@ -28,14 +28,14 @@ public class IntegerTypeAdapter extends TypeAdapter<Integer> {
                 }
             case STRING:
                 String result = in.nextString();
-                if (result == null || "".equals(result)) {
+                if (result == null || result.isEmpty()) {
                     return 0;
                 }
                 try {
                     return Integer.parseInt(result);
                 } catch (NumberFormatException e) {
                     // 如果带小数点则会抛出这个异常
-                    return (int) new BigDecimal(result).floatValue();
+                    return new BigDecimal(result).intValue();
                 }
             case NULL:
                 in.nextNull();

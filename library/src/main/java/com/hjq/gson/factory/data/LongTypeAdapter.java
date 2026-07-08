@@ -28,7 +28,7 @@ public class LongTypeAdapter extends TypeAdapter<Long> {
                 }
             case STRING:
                 String result = in.nextString();
-                if (result == null || "".equals(result)) {
+                if (result == null || result.isEmpty()) {
                     return 0L;
                 }
                 try {

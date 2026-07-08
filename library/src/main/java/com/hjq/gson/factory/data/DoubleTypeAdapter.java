@@ -22,7 +22,7 @@ public class DoubleTypeAdapter extends TypeAdapter<Double> {
                 return in.nextDouble();
             case STRING:
                 String result = in.nextString();
-                if (result == null || "".equals(result)) {
+                if (result == null || result.isEmpty()) {
                     return 0D;
                 }
                 return Double.parseDouble(result);

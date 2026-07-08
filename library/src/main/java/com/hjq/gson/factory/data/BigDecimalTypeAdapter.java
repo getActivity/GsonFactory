@@ -22,7 +22,7 @@ public class BigDecimalTypeAdapter extends TypeAdapter<BigDecimal> {
             case NUMBER:
             case STRING:
                 String result = in.nextString();
-                if (result == null || "".equals(result)) {
+                if (result == null || result.isEmpty()) {
                     return new BigDecimal(0);
                 }
                 return new BigDecimal(result);

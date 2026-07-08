@@ -22,7 +22,7 @@ public class FloatTypeAdapter extends TypeAdapter<Float> {
                 return (float) in.nextDouble();
             case STRING:
                 String result = in.nextString();
-                if (result == null || "".equals(result)) {
+                if (result == null || result.isEmpty()) {
                     return 0F;
                 }
                 return Float.parseFloat(result);
