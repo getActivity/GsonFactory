@@ -20,7 +20,7 @@ public interface ParseExceptionCallback {
      * @param fieldName             字段名称（可能为空）
      * @param jsonToken             后台给定的类型
      */
-    void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @NonNull JsonToken jsonToken);
+    void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken jsonToken);
 
     /**
      * List item 类型解析异常
