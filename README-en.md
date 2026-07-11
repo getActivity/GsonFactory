@@ -91,7 +91,7 @@ GsonFactory.setSingletonGson(@Nullable Gson gson);
 GsonBuilder gsonBuilder = GsonFactory.newGsonBuilder();
 
 // Set Json parsing fault-tolerant callback object
-GsonFactory.setParseExceptionCallback(@Nullable ParseExceptionCallback callback);
+GsonFactory.setOnParseExceptionCallback(@Nullable OnParseExceptionCallback callback);
 
 // Register type adapter factory
 GsonFactory.registerTypeAdapterFactory(@NonNull TypeAdapterFactory factory);
@@ -278,7 +278,7 @@ new GsonBuilder()
 
 * If your backend uses PHP, I highly recommend you use this framework, because PHP returns very messy data, those who have experienced it know what I mean, saying more is crying, those who have not experienced it will not understand no matter how much I say.
 
-* If your backend uses Java, then you can decide based on the actual situation, you can use it or not, but it is better to use it, as a fallback solution, so that you can prevent the backend from suddenly not adhering to the code, for example, in my current company, all backends are developed using Java, but Bugly still reports about Gson parsing exceptions, the following data is collected through `GsonFactory.setParseExceptionCallback`, you can refer to it:
+* If your backend uses Java, then you can decide based on the actual situation, you can use it or not, but it is better to use it, as a fallback solution, so that you can prevent the backend from suddenly not adhering to the code, for example, in my current company, all backends are developed using Java, but Bugly still reports about Gson parsing exceptions, the following data is collected through `GsonFactory.setOnParseExceptionCallback`, you can refer to it:
 
 ![](picture/bugly_report_error.jpg)
 
@@ -304,11 +304,11 @@ new GsonBuilder()
 
 #### How do I know if a Json error has occurred and ensure that the problem is not hidden?
 
-* For this question, the solution is also very simple, use the `GsonFactory.setParseExceptionCallback` API. If the backend returns incorrect data structure, in debug mode, it will directly throw an exception, developers can know it immediately; and in online mode, report this issue to ensure that no issue is missed (can be uploaded to the backend or Bugly error list), the example code is as follows:
+* For this question, the solution is also very simple, use the `GsonFactory.setOnParseExceptionCallback` API. If the backend returns incorrect data structure, in debug mode, it will directly throw an exception, developers can know it immediately; and in online mode, report this issue to ensure that no issue is missed (can be uploaded to the backend or Bugly error list), the example code is as follows:
 
 ```java
 // Set Json parsing fault-tolerant listener
-GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
+GsonFactory.setOnParseExceptionCallback(new OnParseExceptionCallback() {
 
     @Override
     public void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken jsonToken) {

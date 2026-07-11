@@ -10,7 +10,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.gson.factory.ParseExceptionCallback;
+import com.hjq.gson.factory.OnParseExceptionCallback;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -57,7 +57,7 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
 
         if (jsonToken != JsonToken.BEGIN_ARRAY) {
             in.skipValue();
-            ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
+            OnParseExceptionCallback callback = GsonFactory.getOnParseExceptionCallback();
             if (callback != null && mTypeToken != null) {
                 callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
             }
@@ -74,7 +74,7 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
                 collection.add(instance);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
-                ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
+                OnParseExceptionCallback callback = GsonFactory.getOnParseExceptionCallback();
                 if (callback != null && mTypeToken != null) {
                     callback.onParseListItemException(mTypeToken, mFieldName, itemJsonToken);
                 }

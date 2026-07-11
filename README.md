@@ -91,7 +91,7 @@ GsonFactory.setSingletonGson(@Nullable Gson gson);
 GsonBuilder gsonBuilder = GsonFactory.newGsonBuilder();
 
 // 设置 Json 解析容错回调对象
-GsonFactory.setParseExceptionCallback(@Nullable ParseExceptionCallback callback);
+GsonFactory.setOnParseExceptionCallback(@Nullable OnParseExceptionCallback callback);
 
 // 注册类型适配器
 GsonFactory.registerTypeAdapterFactory(@NonNull TypeAdapterFactory factory);
@@ -278,7 +278,7 @@ new GsonBuilder()
 
 * 如果你们的后台用的是 PHP，那我十分推荐你使用这个框架，因为 PHP 返回的数据结构很乱，这块经历过的人都懂，说多了都是泪，没经历过的人怎么说都不懂。
 
-* 如果你们的后台用的是 Java，那么可以根据实际情况而定，可用可不用，但是最好用，作为一种兜底方案，这样就能防止后台突然某一天不讲码德，例如我现在的公司的后台全是用 Java 开发的，但是 Bugly 还是有上报关于 Gson 解析的异常，下面是通过 `GsonFactory.setParseExceptionCallback` 采集到的数据，大家可以参考参考：
+* 如果你们的后台用的是 Java，那么可以根据实际情况而定，可用可不用，但是最好用，作为一种兜底方案，这样就能防止后台突然某一天不讲码德，例如我现在的公司的后台全是用 Java 开发的，但是 Bugly 还是有上报关于 Gson 解析的异常，下面是通过 `GsonFactory.setOnParseExceptionCallback` 采集到的数据，大家可以参考参考：
 
 ![](picture/bugly_report_error.jpg)
 
@@ -304,11 +304,11 @@ new GsonBuilder()
 
 #### 使用了这个框架后，我如何知道出现了 Json 错误，从而保证问题不被掩盖？
 
-* 对于这个问题，解决方案也很简单，使用 `GsonFactory.setParseExceptionCallback` API，如果后台返回了错误的数据结构，在调试模式下，直接抛出异常即可，开发者可以第一时间得知；而到了线上模式，对这个问题进行上报即可，保证不漏掉任何一个问题（可上传到后台或者 Bugly 错误列表中），示例代码如下：
+* 对于这个问题，解决方案也很简单，使用 `GsonFactory.setOnParseExceptionCallback` API，如果后台返回了错误的数据结构，在调试模式下，直接抛出异常即可，开发者可以第一时间得知；而到了线上模式，对这个问题进行上报即可，保证不漏掉任何一个问题（可上传到后台或者 Bugly 错误列表中），示例代码如下：
 
 ```java
 // 设置 Json 解析容错监听
-GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
+GsonFactory.setOnParseExceptionCallback(new OnParseExceptionCallback() {
 
     @Override
     public void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken jsonToken) {

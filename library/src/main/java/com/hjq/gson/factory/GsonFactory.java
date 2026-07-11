@@ -52,7 +52,7 @@ public final class GsonFactory {
     private static ToNumberStrategy sObjectToNumberStrategy = new AutoToNumberStrategy();
 
     @Nullable
-    private static ParseExceptionCallback sParseExceptionCallback;
+    private static OnParseExceptionCallback sCallback;
 
     @Nullable
     private static volatile Gson sGson;
@@ -85,16 +85,16 @@ public final class GsonFactory {
     /**
      * 设置 Json 解析出错回调对象
      */
-    public static void setParseExceptionCallback(@Nullable ParseExceptionCallback callback) {
-        sParseExceptionCallback = callback;
+    public static void setOnParseExceptionCallback(@Nullable OnParseExceptionCallback callback) {
+        sCallback = callback;
     }
 
     /**
      * 获取 Json 解析出错回调对象（可能为空）
      */
     @Nullable
-    public static ParseExceptionCallback getParseExceptionCallback() {
-        return sParseExceptionCallback;
+    public static OnParseExceptionCallback getOnParseExceptionCallback() {
+        return sCallback;
     }
 
     /**

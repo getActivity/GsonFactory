@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonToken;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.gson.factory.ParseExceptionCallback;
+import com.hjq.gson.factory.OnParseExceptionCallback;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ public final class JsonUnitTest {
         // CrashReport.initCrashReport(InstrumentationRegistry.getInstrumentation().getContext());
         mGson = GsonFactory.getSingletonGson();
         // 设置 Json 解析容错监听
-        GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
+        GsonFactory.setOnParseExceptionCallback(new OnParseExceptionCallback() {
 
             @Override
             public void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @NonNull JsonToken jsonToken) {

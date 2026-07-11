@@ -11,7 +11,7 @@ import com.google.gson.stream.JsonToken;
  *    time   : 2021/02/02
  *    desc   : Json 解析异常回调类
  */
-public interface ParseExceptionCallback {
+public interface OnParseExceptionCallback {
 
     /**
      * 对象类型解析异常

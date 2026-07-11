@@ -14,7 +14,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import com.hjq.gson.factory.GsonFactory;
-import com.hjq.gson.factory.ParseExceptionCallback;
+import com.hjq.gson.factory.OnParseExceptionCallback;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
                     in.endArray();
                 } else {
                     in.skipValue();
-                    ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
+                    OnParseExceptionCallback callback = GsonFactory.getOnParseExceptionCallback();
                     if (callback != null && mTypeToken != null) {
                         callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
                     }
@@ -100,7 +100,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
                     map.put(key, value);
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
-                    ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
+                    OnParseExceptionCallback callback = GsonFactory.getOnParseExceptionCallback();
                     if (callback != null && mTypeToken != null) {
                         callback.onParseMapItemException(mTypeToken, mFieldName, String.valueOf(key), itemJsonToken);
                     }
@@ -109,7 +109,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
             in.endObject();
         } else {
             in.skipValue();
-            ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
+            OnParseExceptionCallback callback = GsonFactory.getOnParseExceptionCallback();
             if (callback != null && mTypeToken != null) {
                 callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
             }
