@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.JsonIOException;
 import com.google.gson.internal.ObjectConstructor;
 import java.lang.reflect.ParameterizedType;
@@ -14,13 +15,15 @@ import java.util.EnumSet;
  */
 public final class EnumSetConstructor<T> implements ObjectConstructor<T> {
 
+    @NonNull
     private final Type mType;
 
-    public EnumSetConstructor(Type type) {
+    public EnumSetConstructor(@NonNull Type type) {
         mType = type;
     }
 
     @SuppressWarnings("unchecked")
+    @NonNull
     @Override
     public T construct() {
         if (mType instanceof ParameterizedType) {

@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.other;
 
+import androidx.annotation.NonNull;
 import com.google.gson.ToNumberStrategy;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
@@ -13,8 +14,9 @@ import java.math.BigDecimal;
  */
 public class AutoToNumberStrategy implements ToNumberStrategy {
 
+    @NonNull
     @Override
-    public Number readNumber(JsonReader in) throws IOException {
+    public Number readNumber(@NonNull JsonReader in) throws IOException {
         // Github issue 地址：https://github.com/getActivity/GsonFactory/issues/40
         String numberString = in.nextString();
         BigDecimal bigDecimal = new BigDecimal(numberString);

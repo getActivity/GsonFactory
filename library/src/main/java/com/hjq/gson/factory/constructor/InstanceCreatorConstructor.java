@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.InstanceCreator;
 import com.google.gson.internal.ObjectConstructor;
 import java.lang.reflect.Type;
@@ -12,14 +13,17 @@ import java.lang.reflect.Type;
  */
 public final class InstanceCreatorConstructor<T> implements ObjectConstructor<T> {
 
+    @NonNull
     private final InstanceCreator<T> mInstanceCreator;
+    @NonNull
     private final Type mType;
 
-    public InstanceCreatorConstructor(InstanceCreator<T> instanceCreator, Type type) {
+    public InstanceCreatorConstructor(@NonNull InstanceCreator<T> instanceCreator, @NonNull Type type) {
         mInstanceCreator = instanceCreator;
         mType = type;
     }
 
+    @NonNull
     @Override
     public T construct() {
         return mInstanceCreator.createInstance(mType);

@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.internal.ObjectConstructor;
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -11,13 +12,16 @@ import java.util.concurrent.ConcurrentSkipListMap;
  */
 public final class ConcurrentSkipListMapConstructor implements ObjectConstructor<ConcurrentSkipListMap<?, ?>> {
 
+    @NonNull
     private static final ConcurrentSkipListMapConstructor INSTANCE = new ConcurrentSkipListMapConstructor();
 
     @SuppressWarnings("unchecked")
+    @NonNull
     public static  <T extends ObjectConstructor<?>> T getInstance() {
         return (T) INSTANCE;
     }
 
+    @NonNull
     @Override
     public ConcurrentSkipListMap<?, ?> construct() {
         return new ConcurrentSkipListMap<>();

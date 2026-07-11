@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.element;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.ObjectConstructor;
@@ -21,24 +23,30 @@ import java.util.Collection;
  */
 public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
 
+    @NonNull
     private final TypeAdapter<E> mElementTypeAdapter;
+    @NonNull
     private final ObjectConstructor<? extends Collection<E>> mObjectConstructor;
 
+    @Nullable
     private TypeToken<?> mTypeToken;
+    @Nullable
     private String mFieldName;
 
-    public CollectionTypeAdapter(Gson gson, Type elementType, TypeAdapter<E> elementTypeAdapter, ObjectConstructor<? extends Collection<E>> constructor) {
+    public CollectionTypeAdapter(@NonNull Gson gson, @NonNull Type elementType, @NonNull TypeAdapter<E> elementTypeAdapter,
+                                 @NonNull ObjectConstructor<? extends Collection<E>> constructor) {
         mElementTypeAdapter = new TypeAdapterRuntimeTypeWrapper<>(gson, elementTypeAdapter, elementType);
         mObjectConstructor = constructor;
     }
 
-    public void setReflectiveType(TypeToken<?> typeToken, String fieldName) {
+    public void setReflectiveType(@NonNull TypeToken<?> typeToken, @Nullable String fieldName) {
         mTypeToken = typeToken;
         mFieldName = fieldName;
     }
 
+    @Nullable
     @Override
-    public Collection<E> read(JsonReader in) throws IOException {
+    public Collection<E> read(@NonNull JsonReader in) throws IOException {
         JsonToken jsonToken = in.peek();
         Collection<E> collection = mObjectConstructor.construct();
 
@@ -50,7 +58,7 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
         if (jsonToken != JsonToken.BEGIN_ARRAY) {
             in.skipValue();
             ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
-            if (callback != null) {
+            if (callback != null && mTypeToken != null) {
                 callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
             }
             return collection;
@@ -67,7 +75,7 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
                 ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
-                if (callback != null) {
+                if (callback != null && mTypeToken != null) {
                     callback.onParseListItemException(mTypeToken, mFieldName, itemJsonToken);
                 }
             }
@@ -78,7 +86,7 @@ public class CollectionTypeAdapter<E> extends TypeAdapter<Collection<E>> {
     }
 
     @Override
-    public void write(JsonWriter out, Collection<E> collection) throws IOException {
+    public void write(@NonNull JsonWriter out, @Nullable Collection<E> collection) throws IOException {
         if (collection == null) {
             out.nullValue();
             return;

@@ -2,6 +2,8 @@ package com.hjq.gson.factory.test;
 
 import android.content.Context;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -39,21 +41,21 @@ public final class JsonUnitTest {
         GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
 
             @Override
-            public void onParseObjectException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
+            public void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @NonNull JsonToken jsonToken) {
                 handlerGsonParseException("解析对象析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
             }
 
             @Override
-            public void onParseListItemException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken) {
+            public void onParseListItemException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken listItemJsonToken) {
                 handlerGsonParseException("解析 List 异常：" + typeToken + "#" + fieldName + "，后台返回的条目类型为：" + listItemJsonToken);
             }
 
             @Override
-            public void onParseMapItemException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken) {
+            public void onParseMapItemException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable String mapItemKey, @Nullable JsonToken mapItemJsonToken) {
                 handlerGsonParseException("解析 Map 异常：" + typeToken + "#" + fieldName + "，mapItemKey = " + mapItemKey + "，后台返回的条目类型为：" + mapItemJsonToken);
             }
 
-            private void handlerGsonParseException(String message) {
+            private void handlerGsonParseException(@NonNull String message) {
                 Log.e(TAG, message);
                 /*
                 IllegalArgumentException exception = new IllegalArgumentException(message);

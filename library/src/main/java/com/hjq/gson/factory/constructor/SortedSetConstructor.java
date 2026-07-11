@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.internal.ObjectConstructor;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -12,13 +13,16 @@ import java.util.TreeSet;
  */
 public final class SortedSetConstructor implements ObjectConstructor<SortedSet<?>> {
 
+    @NonNull
     private static final SortedSetConstructor INSTANCE = new SortedSetConstructor();
 
     @SuppressWarnings("unchecked")
+    @NonNull
     public static  <T extends ObjectConstructor<?>> T getInstance() {
         return (T) INSTANCE;
     }
 
+    @NonNull
     @Override
     public SortedSet<?> construct() {
         return new TreeSet<>();

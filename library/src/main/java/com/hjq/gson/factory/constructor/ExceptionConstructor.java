@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.JsonIOException;
 import com.google.gson.internal.ObjectConstructor;
 
@@ -11,12 +12,14 @@ import com.google.gson.internal.ObjectConstructor;
  */
 public final class ExceptionConstructor<T> implements ObjectConstructor<T> {
 
+    @NonNull
     private final String mExceptionMessage;
 
-    public ExceptionConstructor(String exceptionMessage) {
+    public ExceptionConstructor(@NonNull String exceptionMessage) {
         mExceptionMessage = exceptionMessage;
     }
 
+    @NonNull
     @Override
     public T construct() {
         throw new JsonIOException(mExceptionMessage);

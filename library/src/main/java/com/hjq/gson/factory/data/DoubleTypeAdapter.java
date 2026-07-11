@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.data;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -14,8 +16,9 @@ import java.io.IOException;
  */
 public class DoubleTypeAdapter extends TypeAdapter<Double> {
 
+    @Nullable
     @Override
-    public Double read(JsonReader in) throws IOException {
+    public Double read(@NonNull JsonReader in) throws IOException {
         JsonToken jsonToken = in.peek();
         switch (jsonToken) {
             case NUMBER:
@@ -36,7 +39,7 @@ public class DoubleTypeAdapter extends TypeAdapter<Double> {
     }
 
     @Override
-    public void write(JsonWriter out, Double value) throws IOException {
+    public void write(@NonNull JsonWriter out, @Nullable Double value) throws IOException {
         out.value(value);
     }
 }

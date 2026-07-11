@@ -1,5 +1,7 @@
 package com.hjq.gson.factory;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonToken;
 
@@ -18,7 +20,7 @@ public interface ParseExceptionCallback {
      * @param fieldName             字段名称（可能为空）
      * @param jsonToken             后台给定的类型
      */
-    void onParseObjectException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken);
+    void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @NonNull JsonToken jsonToken);
 
     /**
      * List item 类型解析异常
@@ -27,7 +29,7 @@ public interface ParseExceptionCallback {
      * @param fieldName             字段名称（可能为空）
      * @param listItemJsonToken     List 条目类型（可能为空）
      */
-    void onParseListItemException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken);
+    void onParseListItemException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken listItemJsonToken);
 
     /**
      * Map item 类型解析异常
@@ -37,5 +39,5 @@ public interface ParseExceptionCallback {
      * @param mapItemKey            Map 集合中的 key 值，如果等于为 "null" 字符串，则证明后端返回了错误类型的 key 过来
      * @param mapItemJsonToken      Map 条目类型（可能为空）
      */
-    void onParseMapItemException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken);
+    void onParseMapItemException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable String mapItemKey, @Nullable JsonToken mapItemJsonToken);
 }

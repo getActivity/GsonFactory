@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.element;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory;
@@ -7,7 +9,6 @@ import com.google.gson.internal.bind.SerializationDelegatingTypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -20,24 +21,28 @@ import java.lang.reflect.TypeVariable;
  */
 public class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
 
+    @NonNull
     private final Gson mGson;
+    @NonNull
     private final TypeAdapter<T> mDelegate;
+    @NonNull
     private final Type mType;
 
-    public TypeAdapterRuntimeTypeWrapper(Gson gson, TypeAdapter<T> delegate, Type type) {
+    public TypeAdapterRuntimeTypeWrapper(@NonNull Gson gson, @NonNull TypeAdapter<T> delegate, @NonNull Type type) {
         mGson = gson;
         mDelegate = delegate;
         mType = type;
     }
 
+    @Nullable
     @Override
-    public T read(JsonReader in) throws IOException {
+    public T read(@NonNull JsonReader in) throws IOException {
         return mDelegate.read(in);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void write(JsonWriter out, T value) throws IOException {
+    public void write(@NonNull JsonWriter out, @Nullable T value) throws IOException {
         // Order of preference for choosing type adapters
         // First preference: a type adapter registered for the runtime type
         // Second preference: a type adapter registered for the declared type
@@ -70,7 +75,7 @@ public class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
      *
      * @param typeAdapter the type adapter to check.
      */
-    private static boolean isReflective(TypeAdapter<?> typeAdapter) {
+    private static boolean isReflective(@NonNull TypeAdapter<?> typeAdapter) {
         // Run this in loop in case multiple delegating adapters are nested
         while (typeAdapter instanceof SerializationDelegatingTypeAdapter) {
             TypeAdapter<?> delegate = ((SerializationDelegatingTypeAdapter<?>) typeAdapter).getSerializationDelegate();
@@ -87,7 +92,8 @@ public class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
     /**
      * Finds a compatible runtime type if it is more specific
      */
-    private static Type getRuntimeTypeIfMoreSpecific(Type type, Object value) {
+    @NonNull
+    private static Type getRuntimeTypeIfMoreSpecific(@NonNull Type type, @Nullable Object value) {
         if (value != null && (type instanceof Class<?> || type instanceof TypeVariable<?>)) {
             type = value.getClass();
         }

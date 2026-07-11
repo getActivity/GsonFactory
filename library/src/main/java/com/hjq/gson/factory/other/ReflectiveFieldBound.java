@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.other;
 
+import androidx.annotation.NonNull;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
@@ -13,18 +14,20 @@ import java.io.IOException;
 public abstract class ReflectiveFieldBound {
 
     /** 字段名称 */
+    @NonNull
     private final String mFieldName;
     /** 序列化标记 */
     private final boolean mSerialized;
     /** 反序列化标记 */
     private final boolean mDeserialized;
 
-    public ReflectiveFieldBound(String name, boolean serialized, boolean deserialized) {
+    public ReflectiveFieldBound(@NonNull String name, boolean serialized, boolean deserialized) {
         mFieldName = name;
         mSerialized = serialized;
         mDeserialized = deserialized;
     }
 
+    @NonNull
     public String getFieldName() {
         return mFieldName;
     }
@@ -37,9 +40,9 @@ public abstract class ReflectiveFieldBound {
         return mSerialized;
     }
 
-    public abstract void write(JsonWriter writer, Object value) throws IOException, IllegalAccessException;
+    public abstract void write(@NonNull JsonWriter writer, @NonNull Object value) throws IOException, IllegalAccessException;
 
-    public abstract void read(JsonReader reader, Object value) throws IOException, IllegalAccessException;
+    public abstract void read(@NonNull JsonReader reader, @NonNull Object value) throws IOException, IllegalAccessException;
 
-    public abstract boolean writeField(Object value) throws IOException, IllegalAccessException;
+    public abstract boolean writeField(@NonNull Object value) throws IOException, IllegalAccessException;
 }

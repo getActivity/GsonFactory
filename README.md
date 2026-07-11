@@ -85,22 +85,25 @@ Gson gson = GsonFactory.getSingletonGson();
 
 ```java
 // 设置自定义的 Gson 对象
-GsonFactory.setSingletonGson(Gson gson);
+GsonFactory.setSingletonGson(@Nullable Gson gson);
 
 // 创建一个 Gson 构建器（已处理容错）
 GsonBuilder gsonBuilder = GsonFactory.newGsonBuilder();
 
+// 设置 Json 解析容错回调对象
+GsonFactory.setParseExceptionCallback(@Nullable ParseExceptionCallback callback);
+
 // 注册类型适配器
-GsonFactory.registerTypeAdapterFactory(TypeAdapterFactory factory);
+GsonFactory.registerTypeAdapterFactory(@NonNull TypeAdapterFactory factory);
 
 // 注册构造函数创建器
-GsonFactory.registerInstanceCreator(Type type, InstanceCreator<?> creator);
+GsonFactory.registerInstanceCreator(@NonNull Type type, @NonNull InstanceCreator<?> creator);
 
 // 添加反射访问过滤器
-GsonFactory.addReflectionAccessFilter(ReflectionAccessFilter filter);
+GsonFactory.addReflectionAccessFilter(@Nullable ReflectionAccessFilter filter);
 
-// 设置 Json 解析容错回调对象
-GsonFactory.setParseExceptionCallback(ParseExceptionCallback callback);
+// 设置自动转换数值类型的策略
+GsonFactory.setObjectToNumberStrategy(@Nullable ToNumberStrategy strategy);
 ```
 
 #### 框架混淆规则
@@ -308,21 +311,21 @@ new GsonBuilder()
 GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
 
     @Override
-    public void onParseObjectException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
+    public void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken jsonToken) {
         handlerGsonParseException("解析对象析异常：" + typeToken + "#" + fieldName + "，后台返回的类型为：" + jsonToken);
     }
 
     @Override
-    public void onParseListItemException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken) {
+    public void onParseListItemException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken listItemJsonToken) {
         handlerGsonParseException("解析 List 异常：" + typeToken + "#" + fieldName + "，后台返回的条目类型为：" + listItemJsonToken);
     }
 
     @Override
-    public void onParseMapItemException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken) {
+    public void onParseMapItemException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable String mapItemKey, @Nullable JsonToken mapItemJsonToken) {
         handlerGsonParseException("解析 Map 异常：" + typeToken + "#" + fieldName + "，mapItemKey = " + mapItemKey + "，后台返回的条目类型为：" + mapItemJsonToken);
     }
 
-    private void handlerGsonParseException(String message) {
+    private void handlerGsonParseException(@NonNull String message) {
         IllegalArgumentException exception = new IllegalArgumentException(message);
         if (BuildConfig.DEBUG) {
             throw exception;

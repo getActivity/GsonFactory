@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.element;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.ObjectConstructor;
@@ -21,24 +23,29 @@ import java.util.Map;
  */
 public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
 
+    @NonNull
     private final ObjectConstructor<T> mConstructor;
+    @NonNull
     private final Map<String, ReflectiveFieldBound> mBoundFields;
 
+    @Nullable
     private TypeToken<?> mTypeToken;
+    @Nullable
     private String mFieldName;
 
-    public ReflectiveTypeAdapter(ObjectConstructor<T> constructor, Map<String, ReflectiveFieldBound> fields) {
+    public ReflectiveTypeAdapter(@NonNull ObjectConstructor<T> constructor, @NonNull Map<String, ReflectiveFieldBound> fields) {
         mConstructor = constructor;
         mBoundFields = fields;
     }
 
-    public void setReflectiveType(TypeToken<?> typeToken, String fieldName) {
+    public void setReflectiveType(@NonNull TypeToken<?> typeToken, @Nullable String fieldName) {
         mTypeToken = typeToken;
         mFieldName = fieldName;
     }
 
+    @Nullable
     @Override
-    public T read(JsonReader in) throws IOException {
+    public T read(@NonNull JsonReader in) throws IOException {
         JsonToken jsonToken = in.peek();
 
         if (jsonToken == JsonToken.NULL) {
@@ -49,7 +56,7 @@ public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
         if (jsonToken != JsonToken.BEGIN_OBJECT) {
             in.skipValue();
             ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
-            if (callback != null) {
+            if (callback != null && mTypeToken != null) {
                 callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
             }
             return null;
@@ -86,7 +93,7 @@ public class ReflectiveTypeAdapter<T> extends TypeAdapter<T> {
     }
 
     @Override
-    public void write(JsonWriter out, T value) throws IOException {
+    public void write(@NonNull JsonWriter out, @Nullable T value) throws IOException {
         if (value == null) {
             out.nullValue();
             return;

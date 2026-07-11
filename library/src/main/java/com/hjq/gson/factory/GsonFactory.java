@@ -1,5 +1,7 @@
 package com.hjq.gson.factory;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -46,10 +48,13 @@ public final class GsonFactory {
 
     private static final CopyOnWriteArrayList<ReflectionAccessFilter> REFLECTION_ACCESS_FILTERS = new CopyOnWriteArrayList<>();
 
+    @Nullable
     private static ToNumberStrategy sObjectToNumberStrategy = new AutoToNumberStrategy();
 
+    @Nullable
     private static ParseExceptionCallback sParseExceptionCallback;
 
+    @Nullable
     private static volatile Gson sGson;
 
     private GsonFactory() {}
@@ -57,6 +62,7 @@ public final class GsonFactory {
     /**
      * 获取单例的 Gson 对象
      */
+    @NonNull
     public static Gson getSingletonGson() {
         // 加入双重校验锁
         if(sGson == null) {
@@ -72,20 +78,21 @@ public final class GsonFactory {
     /**
      * 设置单例的 Gson 对象
      */
-    public static void setSingletonGson(Gson gson) {
+    public static void setSingletonGson(@Nullable Gson gson) {
         sGson = gson;
     }
 
     /**
      * 设置 Json 解析出错回调对象
      */
-    public static void setParseExceptionCallback(ParseExceptionCallback callback) {
-        GsonFactory.sParseExceptionCallback = callback;
+    public static void setParseExceptionCallback(@Nullable ParseExceptionCallback callback) {
+        sParseExceptionCallback = callback;
     }
 
     /**
      * 获取 Json 解析出错回调对象（可能为空）
      */
+    @Nullable
     public static ParseExceptionCallback getParseExceptionCallback() {
         return sParseExceptionCallback;
     }
@@ -93,7 +100,7 @@ public final class GsonFactory {
     /**
      * 注册类型解析适配器
      */
-    public static void registerTypeAdapterFactory(TypeAdapterFactory factory) {
+    public static void registerTypeAdapterFactory(@NonNull TypeAdapterFactory factory) {
         TYPE_ADAPTER_FACTORIES.add(factory);
     }
 
@@ -103,14 +110,14 @@ public final class GsonFactory {
      * @param type                  对象类型
      * @param creator               实例创建器
      */
-    public static void registerInstanceCreator(Type type, InstanceCreator<?> creator) {
+    public static void registerInstanceCreator(@NonNull Type type, @NonNull InstanceCreator<?> creator) {
         INSTANCE_CREATORS.put(type, creator);
     }
 
     /**
      * 添加反射访问过滤器，同等于 {@link GsonBuilder#addReflectionAccessFilter(ReflectionAccessFilter)}
      */
-    public static void addReflectionAccessFilter(ReflectionAccessFilter filter) {
+    public static void addReflectionAccessFilter(@Nullable ReflectionAccessFilter filter) {
         if (filter == null) {
             return;
         }
@@ -120,13 +127,14 @@ public final class GsonFactory {
     /**
      * 设置自动转换数值类型的策略
      */
-    public static void setObjectToNumberStrategy(ToNumberStrategy objectToNumberStrategy) {
-        GsonFactory.sObjectToNumberStrategy = objectToNumberStrategy;
+    public static void setObjectToNumberStrategy(@Nullable ToNumberStrategy strategy) {
+        sObjectToNumberStrategy = strategy;
     }
 
     /**
      * 创建 Gson 构建对象
      */
+    @NonNull
     public static GsonBuilder newGsonBuilder() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         MainConstructor mainConstructor = new MainConstructor(INSTANCE_CREATORS, true, REFLECTION_ACCESS_FILTERS);

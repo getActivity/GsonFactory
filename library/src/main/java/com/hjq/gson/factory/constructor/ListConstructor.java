@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.internal.ObjectConstructor;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +13,16 @@ import java.util.List;
  */
 public final class ListConstructor implements ObjectConstructor<List<?>> {
 
+    @NonNull
     private static final ListConstructor INSTANCE = new ListConstructor();
 
     @SuppressWarnings("unchecked")
+    @NonNull
     public static  <T extends ObjectConstructor<?>> T getInstance() {
         return (T) INSTANCE;
     }
 
+    @NonNull
     @Override
     public List<?> construct() {
         return new ArrayList<>();

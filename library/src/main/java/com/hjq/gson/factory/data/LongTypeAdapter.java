@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.data;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -15,8 +17,9 @@ import java.math.BigDecimal;
  */
 public class LongTypeAdapter extends TypeAdapter<Long> {
 
+    @Nullable
     @Override
-    public Long read(JsonReader in) throws IOException {
+    public Long read(@NonNull JsonReader in) throws IOException {
         JsonToken jsonToken = in.peek();
         switch (jsonToken) {
             case NUMBER:
@@ -47,7 +50,7 @@ public class LongTypeAdapter extends TypeAdapter<Long> {
     }
 
     @Override
-    public void write(JsonWriter out, Long value) throws IOException {
+    public void write(@NonNull JsonWriter out, @Nullable Long value) throws IOException {
         out.value(value);
     }
 }

@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.internal.ObjectConstructor;
 import java.util.LinkedHashMap;
 
@@ -11,13 +12,16 @@ import java.util.LinkedHashMap;
  */
 public final class LinkedHashMapConstructor implements ObjectConstructor<LinkedHashMap<?, ?>> {
 
+    @NonNull
     private static final LinkedHashMapConstructor INSTANCE = new LinkedHashMapConstructor();
 
     @SuppressWarnings("unchecked")
+    @NonNull
     public static  <T extends ObjectConstructor<?>> T getInstance() {
         return (T) INSTANCE;
     }
 
+    @NonNull
     @Override
     public LinkedHashMap<?, ?> construct() {
         return new LinkedHashMap<>();

@@ -85,22 +85,25 @@ Gson gson = GsonFactory.getSingletonGson();
 
 ```java
 // Set a custom Gson object
-GsonFactory.setSingletonGson(Gson gson);
+GsonFactory.setSingletonGson(@Nullable Gson gson);
 
 // Create a Gson builder (with fault tolerance)
 GsonBuilder gsonBuilder = GsonFactory.newGsonBuilder();
 
+// Set Json parsing fault-tolerant callback object
+GsonFactory.setParseExceptionCallback(@Nullable ParseExceptionCallback callback);
+
 // Register type adapter factory
-GsonFactory.registerTypeAdapterFactory(TypeAdapterFactory factory);
+GsonFactory.registerTypeAdapterFactory(@NonNull TypeAdapterFactory factory);
 
 // Register instance creator
-GsonFactory.registerInstanceCreator(Type type, InstanceCreator<?> creator);
+GsonFactory.registerInstanceCreator(@NonNull Type type, @NonNull InstanceCreator<?> creator);
 
 // Add reflection access filter
-GsonFactory.addReflectionAccessFilter(ReflectionAccessFilter filter);
+GsonFactory.addReflectionAccessFilter(@Nullable ReflectionAccessFilter filter);
 
-// Set Json parsing fault-tolerant callback object
-GsonFactory.setParseExceptionCallback(ParseExceptionCallback callback);
+// Set the strategy for automatically converting numeric types
+GsonFactory.setObjectToNumberStrategy(@Nullable ToNumberStrategy strategy);
 ```
 
 #### Proguard Rules for the Framework
@@ -308,21 +311,21 @@ new GsonBuilder()
 GsonFactory.setParseExceptionCallback(new ParseExceptionCallback() {
 
     @Override
-    public void onParseObjectException(TypeToken<?> typeToken, String fieldName, JsonToken jsonToken) {
+    public void onParseObjectException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken jsonToken) {
         handlerGsonParseException("Parsing object exception: " + typeToken + "#" + fieldName + "，backend returned type: " + jsonToken);
     }
 
     @Override
-    public void onParseListItemException(TypeToken<?> typeToken, String fieldName, JsonToken listItemJsonToken) {
+    public void onParseListItemException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable JsonToken listItemJsonToken) {
         handlerGsonParseException("Parsing List exception: " + typeToken + "#" + fieldName + "，backend returned item type: " + listItemJsonToken);
     }
 
     @Override
-    public void onParseMapItemException(TypeToken<?> typeToken, String fieldName, String mapItemKey, JsonToken mapItemJsonToken) {
+    public void onParseMapItemException(@NonNull TypeToken<?> typeToken, @Nullable String fieldName, @Nullable String mapItemKey, @Nullable JsonToken mapItemJsonToken) {
         handlerGsonParseException("Parsing Map exception: " + typeToken + "#" + fieldName + "，mapItemKey = " + mapItemKey + "，backend returned item type: " + mapItemJsonToken);
     }
 
-    private void handlerGsonParseException(String message) {
+    private void handlerGsonParseException(@NonNull String message) {
         if (BuildConfig.DEBUG) {
             throw new IllegalArgumentException(message);
         } else {

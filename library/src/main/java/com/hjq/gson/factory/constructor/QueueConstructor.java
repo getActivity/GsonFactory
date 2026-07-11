@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.internal.ObjectConstructor;
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -12,13 +13,16 @@ import java.util.Queue;
  */
 public final class QueueConstructor implements ObjectConstructor<Queue<?>> {
 
+    @NonNull
     private static final QueueConstructor INSTANCE = new QueueConstructor();
 
     @SuppressWarnings("unchecked")
+    @NonNull
     public static  <T extends ObjectConstructor<?>> T getInstance() {
         return (T) INSTANCE;
     }
 
+    @NonNull
     @Override
     public Queue<?> construct() {
         return new ArrayDeque<>();

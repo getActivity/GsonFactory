@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.element;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -19,10 +21,11 @@ import java.util.Map;
  */
 public class MapTypeAdapterFactory implements TypeAdapterFactory {
 
+   @NonNull
    private final MainConstructor mMainConstructor;
    final boolean mComplexMapKeySerialization;
 
-   public MapTypeAdapterFactory(MainConstructor mainConstructor,
+   public MapTypeAdapterFactory(@NonNull MainConstructor mainConstructor,
                                 boolean complexMapKeySerialization) {
       mMainConstructor = mainConstructor;
       mComplexMapKeySerialization = complexMapKeySerialization;
@@ -30,7 +33,8 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
 
    @SuppressWarnings({"unchecked", "rawtypes"})
    @Override
-   public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
+   @Nullable
+   public <T> TypeAdapter<T> create(@NonNull Gson gson, @NonNull TypeToken<T> typeToken) {
       Type type = typeToken.getType();
 
       Class<? super T> rawType = typeToken.getRawType();
@@ -54,7 +58,8 @@ public class MapTypeAdapterFactory implements TypeAdapterFactory {
    /**
     * Returns a type adapter that writes the value as a string.
     */
-   private TypeAdapter<?> getKeyAdapter(Gson context, Type keyType) {
+   @NonNull
+   private TypeAdapter<?> getKeyAdapter(@NonNull Gson context, @NonNull Type keyType) {
       return (keyType == boolean.class || keyType == Boolean.class)
               ? TypeAdapters.BOOLEAN_AS_STRING
               : context.getAdapter(TypeToken.get(keyType));

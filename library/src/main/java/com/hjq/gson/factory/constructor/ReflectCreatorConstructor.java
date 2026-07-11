@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.internal.ObjectConstructor;
 import com.google.gson.internal.reflect.ReflectionHelper;
@@ -14,16 +15,20 @@ import java.lang.reflect.InvocationTargetException;
  */
 public final class ReflectCreatorConstructor<T> implements ObjectConstructor<T> {
 
+    @NonNull
     private final ObjectConstructor<T> mKotlinDataClassDefaultValueConstructor;
 
+    @NonNull
     private final Constructor<? super T> mConstructor;
 
-    public ReflectCreatorConstructor(MainConstructor mainConstructor, Gson gson, Class<? super T> rawType, Constructor<? super T> constructor) {
+    public ReflectCreatorConstructor(@NonNull MainConstructor mainConstructor, @NonNull Gson gson,
+                                     @NonNull Class<? super T> rawType, @NonNull Constructor<? super T> constructor) {
         mConstructor = constructor;
         mKotlinDataClassDefaultValueConstructor = new KotlinDataClassDefaultValueConstructor<>(mainConstructor, gson, rawType);
     }
 
     @SuppressWarnings("unchecked")
+    @NonNull
     @Override
     public T construct() {
         T instance = mKotlinDataClassDefaultValueConstructor.construct();

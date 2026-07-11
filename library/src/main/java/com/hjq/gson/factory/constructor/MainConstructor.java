@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.InstanceCreator;
 import com.google.gson.ReflectionAccessFilter;
@@ -31,11 +33,14 @@ import java.util.concurrent.ConcurrentNavigableMap;
  *    desc   : 构造函数构造器，参考：{@link com.google.gson.internal.ConstructorConstructor}
  */
 public final class MainConstructor {
+    @NonNull
     private final Map<Type, InstanceCreator<?>> mInstanceCreators;
     private final boolean mUseJdkUnsafe;
+    @NonNull
     private final List<ReflectionAccessFilter> mReflectionFilters;
 
-    public MainConstructor(Map<Type, InstanceCreator<?>> instanceCreators, boolean useJdkUnsafe, List<ReflectionAccessFilter> reflectionFilters) {
+    public MainConstructor(@NonNull Map<Type, InstanceCreator<?>> instanceCreators, boolean useJdkUnsafe,
+                           @NonNull List<ReflectionAccessFilter> reflectionFilters) {
         mInstanceCreators = instanceCreators;
         mUseJdkUnsafe = useJdkUnsafe;
         mReflectionFilters = reflectionFilters;
@@ -47,7 +52,8 @@ public final class MainConstructor {
      * @param c instance of the class to be checked
      * @return if instantiable {@code null}, else a non-{@code null} exception message
      */
-    static String checkInstantiable(Class<?> c) {
+    @Nullable
+    static String checkInstantiable(@NonNull Class<?> c) {
         int modifiers = c.getModifiers();
         if (Modifier.isInterface(modifiers)) {
             return "Interfaces can't be instantiated! Register an InstanceCreator "
@@ -60,7 +66,8 @@ public final class MainConstructor {
         return null;
     }
 
-    public <T> ObjectConstructor<T> get(Gson gson, TypeToken<T> typeToken) {
+    @NonNull
+    public <T> ObjectConstructor<T> get(@NonNull Gson gson, @NonNull TypeToken<T> typeToken) {
         final Type type = typeToken.getType();
         final Class<? super T> rawType = typeToken.getRawType();
 
@@ -122,7 +129,8 @@ public final class MainConstructor {
     /**
      * 为没有公共无参数构造函数的特殊 JDK 集合类型创建构造函数
      */
-    private static <T> ObjectConstructor<T> newSpecialCollectionConstructor(final Type type, Class<? super T> rawType) {
+    @Nullable
+    private static <T> ObjectConstructor<T> newSpecialCollectionConstructor(@NonNull final Type type, @NonNull Class<? super T> rawType) {
         if (EnumSet.class.isAssignableFrom(rawType)) {
             return new EnumSetConstructor<>(type);
         }
@@ -135,7 +143,9 @@ public final class MainConstructor {
         return null;
     }
 
-    private static <T> ObjectConstructor<T> newDefaultConstructor(MainConstructor mainConstructor, Gson gson, Class<? super T> rawType, FilterResult filterResult) {
+    @Nullable
+    private static <T> ObjectConstructor<T> newDefaultConstructor(@NonNull MainConstructor mainConstructor, @NonNull Gson gson,
+                                                                  @NonNull Class<? super T> rawType, @NonNull FilterResult filterResult) {
         // Cannot invoke constructor of abstract class
         if (Modifier.isAbstract(rawType.getModifiers())) {
             return null;
@@ -188,9 +198,8 @@ public final class MainConstructor {
      * Constructors for common interface types like Map and List and their
      * subtypes.
      */
-    private static <T> ObjectConstructor<T> newDefaultImplementationConstructor(
-        final Type type, Class<? super T> rawType) {
-
+    @Nullable
+    private static <T> ObjectConstructor<T> newDefaultImplementationConstructor(@NonNull final Type type, @NonNull Class<? super T> rawType) {
         /*
          * IMPORTANT: Must only create instances for classes with public no-args constructor.
          * For classes with special constructors / factory methods (e.g. EnumSet)
@@ -229,7 +238,8 @@ public final class MainConstructor {
         return null;
     }
 
-    private <T> ObjectConstructor<T> newUnsafeAllocator(Gson gson, final Class<? super T> rawType) {
+    @NonNull
+    private <T> ObjectConstructor<T> newUnsafeAllocator(@NonNull Gson gson, @NonNull final Class<? super T> rawType) {
         if (mUseJdkUnsafe) {
             return new ReflectSafeCreatorConstructor<>(this, gson, rawType);
         } else {
@@ -240,6 +250,7 @@ public final class MainConstructor {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return mInstanceCreators.toString();

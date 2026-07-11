@@ -1,5 +1,6 @@
 package com.hjq.gson.factory.constructor;
 
+import androidx.annotation.NonNull;
 import com.google.gson.internal.ObjectConstructor;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -12,13 +13,16 @@ import java.util.TreeMap;
  */
 public final class SortedMapConstructor implements ObjectConstructor<SortedMap<?, ?>> {
 
+    @NonNull
     private static final SortedMapConstructor INSTANCE = new SortedMapConstructor();
 
     @SuppressWarnings("unchecked")
+    @NonNull
     public static  <T extends ObjectConstructor<?>> T getInstance() {
         return (T) INSTANCE;
     }
 
+    @NonNull
     @Override
     public SortedMap<?, ?> construct() {
         return new TreeMap<>();

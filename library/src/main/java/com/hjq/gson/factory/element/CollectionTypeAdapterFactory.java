@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.element;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -20,15 +22,17 @@ import java.util.Collection;
  */
 public class CollectionTypeAdapterFactory implements TypeAdapterFactory {
 
+    @NonNull
     private final MainConstructor mMainConstructor;
 
-    public CollectionTypeAdapterFactory(MainConstructor mainConstructor) {
+    public CollectionTypeAdapterFactory(@NonNull MainConstructor mainConstructor) {
         mMainConstructor = mainConstructor;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @Nullable
     @Override
-    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
+    public <T> TypeAdapter<T> create(@NonNull Gson gson, @NonNull TypeToken<T> typeToken) {
         Type type = typeToken.getType();
         Class<? super T> rawType = typeToken.getRawType();
         // 判断是否包含这种类型

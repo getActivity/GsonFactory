@@ -1,12 +1,14 @@
 package com.hjq.gson.factory.element;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.internal.GsonTypes;
 import com.google.gson.internal.Excluder;
+import com.google.gson.internal.GsonTypes;
 import com.google.gson.reflect.TypeToken;
 import com.hjq.gson.factory.constructor.MainConstructor;
 import com.hjq.gson.factory.other.ReflectiveFieldBound;
@@ -27,19 +29,23 @@ import java.util.Map;
  */
 public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
 
+    @NonNull
     private final MainConstructor mMainConstructor;
+    @NonNull
     private final FieldNamingStrategy mFieldNamingPolicy;
+    @NonNull
     private final Excluder mExcluder;
 
-    public ReflectiveTypeAdapterFactory(MainConstructor mainConstructor,
-                                        FieldNamingStrategy strategy, Excluder excluder) {
+    public ReflectiveTypeAdapterFactory(@NonNull MainConstructor mainConstructor,
+                                        @NonNull FieldNamingStrategy strategy, @NonNull Excluder excluder) {
         mMainConstructor = mainConstructor;
         mFieldNamingPolicy = strategy;
         mExcluder = excluder;
     }
 
+    @Nullable
     @Override
-    public <T> TypeAdapter<T> create(Gson gson, final TypeToken<T> type) {
+    public <T> TypeAdapter<T> create(@NonNull Gson gson, @NonNull final TypeToken<T> type) {
         Class<? super T> raw = type.getRawType();
 
         // 判断是否包含这种类型
@@ -79,7 +85,8 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
         return reflectiveTypeAdapter;
     }
 
-    private Map<String, ReflectiveFieldBound> getBoundFields(Gson gson, TypeToken<?> type, Class<?> raw) {
+    @NonNull
+    private Map<String, ReflectiveFieldBound> getBoundFields(@NonNull Gson gson, @NonNull TypeToken<?> type, @NonNull Class<?> raw) {
         Map<String, ReflectiveFieldBound> result = new LinkedHashMap<>();
         if (raw.isInterface()) {
             return result;
@@ -122,15 +129,16 @@ public class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
         return result;
     }
 
-    private boolean excludeField(Field field, boolean serialize) {
+    private boolean excludeField(@NonNull Field field, boolean serialize) {
         return excludeField(field, serialize, mExcluder);
     }
 
-    private static boolean excludeField(Field field, boolean serialize, Excluder excluder) {
+    private static boolean excludeField(@NonNull Field field, boolean serialize, @NonNull Excluder excluder) {
         return !excluder.excludeClass(field.getType(), serialize) && !excluder.excludeField(field, serialize);
     }
 
-    private List<String> getFieldNames(Field field) {
+    @NonNull
+    private List<String> getFieldNames(@NonNull Field field) {
         return ReflectiveTypeUtils.getFieldNames(mFieldNamingPolicy, field);
     }
 }

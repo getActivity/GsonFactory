@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.data;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.JsonElement;
 import com.google.gson.TypeAdapter;
 import com.google.gson.internal.bind.TypeAdapters;
@@ -17,10 +19,12 @@ import org.json.JSONException;
  */
 public class JSONArrayTypeAdapter extends TypeAdapter<JSONArray> {
 
+    @NonNull
     private static final TypeAdapter<JsonElement> PROXY = TypeAdapters.JSON_ELEMENT;
 
+    @Nullable
     @Override
-    public JSONArray read(JsonReader in) throws IOException {
+    public JSONArray read(@NonNull JsonReader in) throws IOException {
         JsonElement read = PROXY.read(in);
         if (read.isJsonArray()) {
             try {
@@ -33,7 +37,7 @@ public class JSONArrayTypeAdapter extends TypeAdapter<JSONArray> {
     }
 
     @Override
-    public void write(JsonWriter out, JSONArray value) throws IOException {
+    public void write(@NonNull JsonWriter out, @Nullable JSONArray value) throws IOException {
         if (value == null) {
             out.nullValue();
             return;

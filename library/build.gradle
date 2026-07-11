@@ -29,6 +29,7 @@ afterEvaluate {
 }
 
 dependencies {
+    compileOnly 'androidx.annotation:annotation:1.0.0'
     // Json 解析框架：https://github.com/google/gson
     // noinspection GradleDependency
     implementation 'com.google.code.gson:gson:2.14.0'

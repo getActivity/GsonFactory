@@ -1,5 +1,7 @@
 package com.hjq.gson.factory.element;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
@@ -27,17 +29,22 @@ import java.util.Map;
  */
 public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
 
+    @NonNull
     private final TypeAdapter<K> mKeyTypeAdapter;
+    @NonNull
     private final TypeAdapter<V> mValueTypeAdapter;
+    @NonNull
     private final ObjectConstructor<? extends Map<K, V>> mConstructor;
     private final boolean mComplexMapKeySerialization;
 
+    @Nullable
     private TypeToken<?> mTypeToken;
+    @Nullable
     private String mFieldName;
 
-    public MapTypeAdapter(Gson context, Type keyType, TypeAdapter<K> keyTypeAdapter,
-                          Type valueType, TypeAdapter<V> valueTypeAdapter,
-                          ObjectConstructor<? extends Map<K, V>> constructor,
+    public MapTypeAdapter(@NonNull Gson context, @NonNull Type keyType, @NonNull TypeAdapter<K> keyTypeAdapter,
+                          @NonNull Type valueType, @NonNull TypeAdapter<V> valueTypeAdapter,
+                          @NonNull ObjectConstructor<? extends Map<K, V>> constructor,
                           boolean complexMapKeySerialization) {
         mKeyTypeAdapter = new TypeAdapterRuntimeTypeWrapper<>(context, keyTypeAdapter, keyType);
         mValueTypeAdapter = new TypeAdapterRuntimeTypeWrapper<>(context, valueTypeAdapter, valueType);
@@ -45,13 +52,14 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
         mComplexMapKeySerialization = complexMapKeySerialization;
     }
 
-    public void setReflectiveType(TypeToken<?> typeToken, String fieldName) {
+    public void setReflectiveType(@NonNull TypeToken<?> typeToken, @Nullable String fieldName) {
         mTypeToken = typeToken;
         mFieldName = fieldName;
     }
 
+    @Nullable
     @Override
-    public Map<K, V> read(JsonReader in) throws IOException {
+    public Map<K, V> read(@NonNull JsonReader in) throws IOException {
         JsonToken jsonToken = in.peek();
         Map<K, V> map = mConstructor.construct();
 
@@ -72,7 +80,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
                 } else {
                     in.skipValue();
                     ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
-                    if (callback != null) {
+                    if (callback != null && mTypeToken != null) {
                         callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
                     }
                 }
@@ -93,7 +101,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                     ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
-                    if (callback != null) {
+                    if (callback != null && mTypeToken != null) {
                         callback.onParseMapItemException(mTypeToken, mFieldName, String.valueOf(key), itemJsonToken);
                     }
                 }
@@ -102,7 +110,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
         } else {
             in.skipValue();
             ParseExceptionCallback callback = GsonFactory.getParseExceptionCallback();
-            if (callback != null) {
+            if (callback != null && mTypeToken != null) {
                 callback.onParseObjectException(mTypeToken, mFieldName, jsonToken);
             }
         }
@@ -110,7 +118,7 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
     }
 
     @Override
-    public void write(JsonWriter out, Map<K, V> map) throws IOException {
+    public void write(@NonNull JsonWriter out, @Nullable Map<K, V> map) throws IOException {
         if (map == null) {
             out.nullValue();
             return;
@@ -157,7 +165,8 @@ public class MapTypeAdapter<K, V> extends TypeAdapter<Map<K, V>> {
         }
     }
 
-    private String keyToString(JsonElement keyElement) {
+    @NonNull
+    private String keyToString(@NonNull JsonElement keyElement) {
         if (keyElement.isJsonPrimitive()) {
             JsonPrimitive primitive = keyElement.getAsJsonPrimitive();
             if (primitive.isNumber()) {
