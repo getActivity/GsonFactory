@@ -41,7 +41,7 @@ android {
 
 dependencies {
     // Gson 解析容错：https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:10.5'
+    implementation 'com.github.getActivity:GsonFactory:10.6'
     // Json 解析框架：https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.14.0'
     // Kotlin 反射库：用于反射 Kotlin data class 类对象，1.5.10 请修改成当前项目 Kotlin 的版本号
@@ -121,9 +121,9 @@ GsonFactory.setObjectToNumberStrategy(@Nullable ToNumberStrategy strategy);
 
 |  功能或细节  | [GsonFactory](https://github.com/getActivity/GsonFactory) | [Gson](https://github.com/google/gson)  | [moshi](https://github.com/square/moshi) | [FastJson](https://github.com/alibaba/fastjson) |
 | :----: | :------: |  :-----: |  :-----: |  :-----: |
-|    对应版本  |  10.5 |  1.30.6  |  1.5.0  |  2.0.28  |
+|    对应版本  |  10.6 |  1.30.6  |  1.5.0  |  2.0.28  |
 |    issues 数   |  [![](https://img.shields.io/github/issues/getActivity/GsonFactory.svg)](https://github.com/getActivity/GsonFactory/issues)  |  [![](https://img.shields.io/github/issues/google/gson.svg)](https://github.com/google/gson/issues)  |  [![](https://img.shields.io/github/issues/square/moshi.svg)](https://github.com/square/moshi/issues)  |  [![](https://img.shields.io/github/issues/alibaba/fastjson.svg)](https://github.com/alibaba/fastjson/issues)  |
-|                    框架体积                 | 60 KB + 283 KB | 283 KB | 162 KB | 188 KB |
+|                    框架体积                 | 65 KB + 283 KB | 283 KB | 162 KB | 188 KB |
 |                   框架维护状态               | 维护中 | 维护中 | 维护中 | 停止维护 |
 |         解析错误类型数据时是否能不报错          |  ✅  |  ❌  |  ❌  |  ✅  |
 |    解析到错误类型数据时是否能往下解析其他字段     |  ✅  |  ❌  |  ❌  |  ❌  |
