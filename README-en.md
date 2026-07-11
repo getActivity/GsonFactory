@@ -41,7 +41,7 @@ android {
 
 dependencies {
     // Gson fault-tolerant parsing: https://github.com/getActivity/GsonFactory
-    implementation 'com.github.getActivity:GsonFactory:10.6'
+    implementation 'com.github.getActivity:GsonFactory:10.8'
     // Json parsing framework: https://github.com/google/gson
     implementation 'com.google.code.gson:gson:2.14.0'
     // Kotlin reflection library: for reflecting Kotlin data class objects, change 1.5.10 to your project's Kotlin version
@@ -121,7 +121,7 @@ GsonFactory.setObjectToNumberStrategy(@Nullable ToNumberStrategy strategy);
 
 |  Feature/Detail  | [GsonFactory](https://github.com/getActivity/GsonFactory) | [Gson](https://github.com/google/gson)  | [moshi](https://github.com/square/moshi) | [FastJson](https://github.com/alibaba/fastjson) |
 | :----: | :------: |  :-----: |  :-----: |  :-----: |
-|    Version  |  10.6 |  1.30.6  |  1.5.0  |  2.0.28  |
+|    Version  |  10.8 |  1.30.6  |  1.5.0  |  2.0.28  |
 |    Number of issues   |  [![](https://img.shields.io/github/issues/getActivity/GsonFactory.svg)](https://github.com/getActivity/GsonFactory/issues)  |  [![](https://img.shields.io/github/issues/google/gson.svg)](https://github.com/google/gson/issues)  |  [![](https://img.shields.io/github/issues/square/moshi.svg)](https://github.com/square/moshi/issues)  |  [![](https://img.shields.io/github/issues/alibaba/fastjson.svg)](https://github.com/alibaba/fastjson/issues)  |
 |                    Framework size                 | 65 KB + 283 KB | 283 KB | 162 KB | 188 KB |
 |                   Maintenance status               | Maintaining | Maintaining | Maintaining | Stopped |
