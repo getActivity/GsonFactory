@@ -43,7 +43,7 @@ dependencies {
     // Gson fault-tolerant parsing: https://github.com/getActivity/GsonFactory
     implementation 'com.github.getActivity:GsonFactory:10.5'
     // Json parsing framework: https://github.com/google/gson
-    implementation 'com.google.code.gson:gson:2.13.2'
+    implementation 'com.google.code.gson:gson:2.14.0'
     // Kotlin reflection library: for reflecting Kotlin data class objects, change 1.5.10 to your project's Kotlin version
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.5.10'
 }
