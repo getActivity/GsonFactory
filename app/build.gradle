@@ -67,5 +67,5 @@ dependencies {
     implementation 'com.github.getActivity:TitleBar:10.8'
 
     // Bugly 异常捕捉：https://bugly.tds.qq.com/docs/sdk/android/
-    implementation 'com.tencent.bugly_16kb:bugly-pro:4.4.7.3'
+    implementation 'com.tencent.bugly_16kb:bugly-pro:4.4.7.8'
 }
